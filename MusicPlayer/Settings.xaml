@@ -1,0 +1,16 @@
+﻿<Window x:Class="MusicBrowser.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MusicBrowser"
+        mc:Ignorable="d"
+        Title="Settings" Height="207" Width="300" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <ListBox x:Name="LibraryFolderList" Margin="10,45,10,35" VerticalAlignment="Center" AllowDrop="True" MinHeight="96" Height="96"/>
+        <Label x:Name="s" Content="Library Folders" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Background="{x:Null}" BorderThickness="1" BorderBrush="#FFABADB3" Height="28"/>
+        <Button x:Name="RefreshLibrary" Content="Refresh Library" Margin="10,0,5,10" VerticalAlignment="Bottom"/>
+        <Label x:Name="FolderCount" Content="0" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Background="{x:Null}" BorderThickness="1" BorderBrush="#FFABADB3" Height="26" RenderTransformOrigin="0.056,0.577"/>
+
+    </Grid>
+</Window>
