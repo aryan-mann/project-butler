@@ -48,7 +48,6 @@ namespace Butler {
         }
 
         private void InitiateCommand() {
-
             string _query = Input.Text;
             if (string.IsNullOrWhiteSpace(_query)) {
                 CurrentStatus.Content = "Empty Command!";
@@ -83,8 +82,6 @@ namespace Butler {
         }
 
         private void CommandLine_Activated(object sender, EventArgs e) {
-            Console.WriteLine("ACITVATED");
-
             this.Activate();
             Input.Focus();
             Keyboard.ClearFocus();

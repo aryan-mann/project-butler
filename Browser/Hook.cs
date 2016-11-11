@@ -11,6 +11,7 @@ namespace Browser {
     [ApplicationHook]
     public class Hook : Module {
 
+        #region Properties
         public override string Author {
             get { return "Aryan Mann"; }
         }
@@ -20,7 +21,8 @@ namespace Browser {
         public override Dictionary<string, Regex> RegisteredCommands {
             get {
                 return new Dictionary<string, Regex>() {
-                    ["url"] = new Regex(@"url (?<url>.+)")
+                    ["search"] = new Regex(@"search (?<url>.+)"),
+                    ["resume"] = new Regex(@"^sr$")
                 };
             }
         }
@@ -30,17 +32,41 @@ namespace Browser {
         public override Uri Website {
             get { return new Uri("http://www.aryanmann.com/"); }
         }
+        #endregion
 
+        //For resuming browsing.
+        string LastUrl = "";
+
+        WebBrowser _Instance = new WebBrowser();
+        WebBrowser Instance {
+            get {
+                if(!_Instance.IsLoaded) {
+                    _Instance = new WebBrowser();
+                }
+                _Instance.Navigated += (uri) => {
+                    LastUrl = uri;
+                };
+                return _Instance;
+            }
+        }
+
+        public override void OnCommandRecieved(string CommandName, string UserInput) {
+            if(CommandName == "search") {
+                Match m = RegisteredCommands["search"].Match(UserInput);
+                LastUrl = m.Groups["url"].Value;
+                Instance.ShowPage(m.Groups["url"].Value);
+            } else if(CommandName == "resume") {
+                Instance.ShowPage(LastUrl);
+            }
+        }
+
+
+
+        #region Unimplemented Methods
         public override void ConfigureSettings() {
             return;
         }
 
-        public override void OnCommandRecieved(string CommandName, string UserInput) {
-            if(CommandName == "url") {
-                Match m = RegisteredCommands["url"].Match(UserInput);
-                System.Windows.MessageBox.Show(m.Groups["url"].Value, "I got what you said!");
-            }
-        }
 
         public override void OnInitialized() {
             return;
@@ -49,5 +75,6 @@ namespace Browser {
         public override void OnShutdown() {
             return;
         }
+        #endregion
     }
 }

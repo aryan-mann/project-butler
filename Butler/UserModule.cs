@@ -93,8 +93,6 @@ namespace Butler {
 
         public void GiveRegexCommand(string _key, string _query) {
             if(!RegisteredCommands.Keys.Contains(_key)) { return; }
-
-            Console.WriteLine(OnCommandRecievedMethod == null);
             
             OnCommandRecievedMethod.Invoke(Instance, new object[] {
                 _key, _query
