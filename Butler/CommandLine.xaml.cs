@@ -55,13 +55,6 @@ namespace Butler {
                 return;
             }
 
-            foreach(KeyValuePair<string,Regex> sysCom in SystemModules.Commands) {
-                if(sysCom.Value.Match(_query).Success) {
-                    SystemModules.InitiateCommand(sysCom.Key, _query);
-                    return;
-                }
-            }
-
             UserModule selectedModule = null;
             string selectedRegexKey = "";
             bool matchFound = false;
