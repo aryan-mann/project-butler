@@ -10,7 +10,6 @@ using ModuleAPI;
 namespace Butler {
 
     public class ModuleLoader {
-
         public static string ModuleDirectory {
             get {
                 string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Modules");

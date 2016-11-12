@@ -20,6 +20,12 @@ namespace ModuleAPI
         public abstract string Author { get; }
         public abstract Uri Website { get; }
         
+        public string BaseDirectory {
+            get {
+                return Path.GetDirectoryName(System.Reflection.Assembly.GetAssembly(GetType()).CodeBase).Substring(6);
+            }
+        }
+
         public abstract Dictionary<string, Regex> RegisteredCommands { get; }
 
         public abstract void OnInitialized();
