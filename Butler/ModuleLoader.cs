@@ -13,7 +13,10 @@ namespace Butler {
 
         public static string ModuleDirectory {
             get {
-                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Modules");
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Modules");
+                if(!Directory.Exists(path)) { Directory.CreateDirectory(path); }
+
+                return path;
             }
         }
         public static Dictionary<int, UserModule> ModuleLoadOrder { get; private set; } = new Dictionary<int, UserModule>();
