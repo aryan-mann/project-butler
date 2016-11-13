@@ -54,19 +54,53 @@ namespace Relax {
 
         public void PlayRandom() {
             string[] validExtensions = new string[] {
-                ".mp3", ".m4a"
+                ".mp3", ".m4a", ".ogg", ".wav", ".flv", ".wmv", ".ink", ".Ink"
             };
 
             string songPath = Path.Combine(BaseDirectory, "Songs");
             if(!Directory.Exists(songPath)) { Directory.CreateDirectory(songPath); return; }
 
-            List<string> files = Directory.GetFiles(songPath, "*", SearchOption.AllDirectories).Where(path => validExtensions.Contains(Path.GetExtension(path).ToLower())).ToList();
+
+            List<string> files = Directory.GetFiles(songPath, "*", SearchOption.AllDirectories).Where(path => validExtensions.Contains(Path.GetExtension(path).ToLower()) || (IsShortcut(path) && validExtensions.Contains(Path.GetExtension(ResolveShortcut(path))))).ToList();
+            
 
             if(files.Count == 0) { return; }
 
             Random r = new Random();
             int fileToPlay = r.Next(0, files.Count - 1);
-            Process p = Process.Start(files[fileToPlay]);
+                        
+            Process pa = new Process() {
+                StartInfo = new ProcessStartInfo() {
+                    FileName = files[fileToPlay],
+                    WindowStyle = ProcessWindowStyle.Minimized
+                }
+            };
+            pa.Start();
+            
+        }
+
+        bool IsShortcut(string path) {
+            string directory = Path.GetDirectoryName(path);
+            string file = Path.GetFileName(path);
+
+            Shell32.Shell shell = new Shell32.Shell();
+            Shell32.Folder folder = shell.NameSpace(directory);
+            Shell32.FolderItem folderItem = folder.ParseName(file);
+
+            if(folderItem != null) { return folderItem.IsLink; }
+            return false;
+        }
+        string ResolveShortcut(string path) {
+            string directory = Path.GetDirectoryName(path);
+            string file = Path.GetFileName(path);
+
+            Shell32.Shell shell = new Shell32.Shell();
+            Shell32.Folder folder = shell.NameSpace(directory);
+            Shell32.FolderItem folderItem = folder.ParseName(file);
+
+            Shell32.ShellLinkObject link = (Shell32.ShellLinkObject)folderItem.GetLink;
+
+            return link.Path;
         }
 
     }
