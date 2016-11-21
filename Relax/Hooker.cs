@@ -22,7 +22,7 @@ namespace Relax {
             get { return "0.1.0"; }
         }
         public override string Name {
-            get { return "Relax"; }
+            get { return "Music Player"; }
         }
         public override Uri Website {
             get { return new Uri("http://www.aryanmann.com/"); }
@@ -38,31 +38,100 @@ namespace Relax {
         }
         #endregion
 
+        SongList SL_Instance;
+
+        private Dictionary<string, Regex> _RegisteredCommands = new Dictionary<string, Regex>() {
+            ["relax"] = new Regex("play ?(anything|something|random|any|whatever)"),
+            ["find song"] = new Regex("find ?song (?<song>.+)"),
+            ["all songs"] = new Regex("all ?songs?")
+        };
         public override Dictionary<string, Regex> RegisteredCommands {
             get {
-                return new Dictionary<string, Regex>() {
-                    ["relax"] = new Regex("(relax|calm ?down|calm|serenity now!?)")
-                };
+                return _RegisteredCommands;
             }
         }
+
+        public static string[] validExtensions = new string[] {
+            ".mp3", ".m4a", ".ogg", ".wav", ".flv", ".wmv", ".ink", ".Ink"
+        };
 
         public override void OnCommandRecieved(string CommandName, string UserInput) {
             if(CommandName == "relax") {
                 PlayRandom();
+            } else if(CommandName == "find song") {
+                PlayThis(RegisteredCommands[CommandName].Match(UserInput).Groups["song"].Value);
+            } else if(CommandName == "all songs") {
+                PlayAll();
+            }
+        }
+
+        public void PlayAll() {
+            string songPath = Path.Combine(BaseDirectory, "Songs");
+            if(!Directory.Exists(songPath)) { Directory.CreateDirectory(songPath); return; }
+
+            List<string> files = Directory.GetFiles(songPath, "*", SearchOption.AllDirectories).Where(path => validExtensions.Contains(Path.GetExtension(path).ToLower()) || (IsShortcut(path) && validExtensions.Contains(Path.GetExtension(ResolveShortcut(path))))).ToList();
+
+            if(SL_Instance == null || !SL_Instance.IsLoaded) {
+                SL_Instance = new SongList(files, BaseDirectory, "all");
+            } else {
+                SL_Instance.FillPaths(files, "all");
+                SL_Instance.FillList();
+            }
+            SL_Instance.Show();
+        }
+
+        public void PlayThis(string songName) {
+            string songPath = Path.Combine(BaseDirectory, "Songs");
+            if(!Directory.Exists(songPath)) { Directory.CreateDirectory(songPath); return; }
+
+            List<string> files = Directory.GetFiles(songPath, "*", SearchOption.AllDirectories).Where(path => validExtensions.Contains(Path.GetExtension(path).ToLower()) || (IsShortcut(path) && validExtensions.Contains(Path.GetExtension(ResolveShortcut(path))))).ToList();
+
+            List<string> matchingFiles = new List<string>();
+            files.ForEach(fl => {
+                if(Regex.Match(Path.GetFileNameWithoutExtension(fl), songName, RegexOptions.IgnoreCase).Success) {
+                    matchingFiles.Add(fl);
+                }
+            });
+
+            if(matchingFiles.Count == 0) { return; } 
+            else if(matchingFiles.Count == 1) {
+                Process pa = new Process() {
+                    StartInfo = new ProcessStartInfo() {
+                        FileName = matchingFiles[0],
+                        WindowStyle = ProcessWindowStyle.Minimized
+                    }
+                };
+                pa.Start();
+                #region --> REMEMBER TO REMOVE THIS <--
+                //files.ForEach(fl => {
+                //    if(Regex.Match(Path.GetFileName(fl).ToLower(), songName.ToLower()).Success) {
+                //        Process pa = new Process() {
+                //            StartInfo = new ProcessStartInfo() {
+                //                FileName = fl,
+                //                WindowStyle = ProcessWindowStyle.Minimized
+                //            }
+                //        };
+                //        pa.Start();
+                //        return;
+                //    }
+                //});
+                #endregion
+            } else {
+                if(SL_Instance == null || !SL_Instance.IsLoaded) {
+                    SL_Instance = new SongList(matchingFiles, BaseDirectory, songName);
+                } else {
+                    SL_Instance.FillPaths(matchingFiles, songName);
+                    SL_Instance.FillList();
+                }
+                SL_Instance.Show();
             }
         }
 
         public void PlayRandom() {
-            string[] validExtensions = new string[] {
-                ".mp3", ".m4a", ".ogg", ".wav", ".flv", ".wmv", ".ink", ".Ink"
-            };
-
             string songPath = Path.Combine(BaseDirectory, "Songs");
             if(!Directory.Exists(songPath)) { Directory.CreateDirectory(songPath); return; }
 
-
             List<string> files = Directory.GetFiles(songPath, "*", SearchOption.AllDirectories).Where(path => validExtensions.Contains(Path.GetExtension(path).ToLower()) || (IsShortcut(path) && validExtensions.Contains(Path.GetExtension(ResolveShortcut(path))))).ToList();
-            
 
             if(files.Count == 0) { return; }
 
@@ -79,7 +148,7 @@ namespace Relax {
             
         }
 
-        bool IsShortcut(string path) {
+        public static bool IsShortcut(string path) {
             string directory = Path.GetDirectoryName(path);
             string file = Path.GetFileName(path);
 
@@ -90,7 +159,7 @@ namespace Relax {
             if(folderItem != null) { return folderItem.IsLink; }
             return false;
         }
-        string ResolveShortcut(string path) {
+        public static string ResolveShortcut(string path) {
             string directory = Path.GetDirectoryName(path);
             string file = Path.GetFileName(path);
 

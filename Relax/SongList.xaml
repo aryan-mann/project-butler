@@ -1,0 +1,13 @@
+﻿<Window x:Class="Relax.SongList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Relax"
+        mc:Ignorable="d"
+        Title="SongList" Height="720" Width="1280" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <ListBox x:Name="SearchList" Height="639" Margin="0,50,0,0" Width="1272" Background="Gray" IsTabStop="True"/>
+        <TextBox x:Name="SearchInput" Height="50" Text="song name" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="30"/>
+    </Grid>
+</Window>

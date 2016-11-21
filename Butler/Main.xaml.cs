@@ -64,7 +64,7 @@ namespace Butler {
                 Application.Current.Shutdown(0);
             };
 
-            this.Loaded += SetupComponents;
+            this.Loaded += SetupComponents;            
         }
 
         private void SetupComponents(object sender, RoutedEventArgs e) {
@@ -74,10 +74,6 @@ namespace Butler {
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
             ModuleLoader.LoadAll();
             ModuleDataGrid.ItemsSource = ModuleLoader.ModuleLoadOrder;
-        }
-
-        private void ReloadDataGridUI(bool UIThread = false) {
-            
         }
 
     }

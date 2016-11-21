@@ -83,6 +83,19 @@ namespace Butler {
             }
         }
 
+        private string _CommandStrings;
+        public string CommandStrings {
+            get {
+                if(_CommandStrings != null) { return _CommandStrings; }
+                string joined = "";
+                foreach(Regex r in RegisteredCommands.Values.ToList()) {
+                    joined += " | [ " + r.ToString() + " ]";
+                }
+                _CommandStrings = joined.Substring(3);
+                return _CommandStrings;
+            }
+        }
+
         private MethodInfo OnCommandRecievedMethod;
 
         private UserModule(Type t) {

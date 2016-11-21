@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="CommandLine" Height="109" Width="600" WindowStyle="None" WindowStartupLocation="CenterOwner" Visibility="Visible">
     <Grid x:Name="Grd" Background="#FFF1F1F1">
-        <TextBox x:Name="Input" TextWrapping="Wrap" Text="Enter Command Here" VerticalAlignment="Top" Margin="5,5,5,0" Height="55" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="36" Background="White"/>
+        <TextBox x:Name="Input" Text="Enter Command Here" VerticalAlignment="Top" Margin="5,5,5,0" Height="55" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="36" Background="White" MaxLines="1"/>
         <StatusBar VerticalAlignment="Bottom" VerticalContentAlignment="Center" Height="32" Background="#FFBBBBBB">
             <Label x:Name="CurrentStatus" Content="Good to go!"/>
         </StatusBar>
