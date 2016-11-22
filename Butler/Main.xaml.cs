@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -61,14 +62,37 @@ namespace Butler {
             this.Closing += Main_HotkeyDeregister;          //Inside Hotkey Registration Region
 
             this.Closing += (sender, e) => {
-                Application.Current.Shutdown(0);
+                TaskbarIconManager.Dispose();
+                System.Windows.Application.Current.Shutdown(0);
             };
 
-            this.Loaded += SetupComponents;            
+            this.Loaded += SetupComponents;
+            this.StateChanged += MainWindow_StateChanged;
+        }
+
+        private void MainWindow_StateChanged(object sender, EventArgs e) {
+            switch(this.WindowState) {
+                case WindowState.Minimized: ShowInTaskbar = false;
+                    break;
+                case WindowState.Maximized:
+                case WindowState.Normal: ShowInTaskbar = true;
+                    break;
+            }
         }
 
         private void SetupComponents(object sender, RoutedEventArgs e) {
             CMD = CommandLine.GetInstance();
+
+            //Taskbar notification icon
+            TaskbarIconManager.AddItem("Show", () => {
+                WindowState = WindowState.Normal;
+            });
+            TaskbarIconManager.AddItem("Exit", () => {
+                System.Windows.Application.Current.Shutdown(0);
+            });
+
+            TaskbarIconManager.CommitItems();
+            TaskbarIconManager.SetActive(true);
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
