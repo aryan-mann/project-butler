@@ -22,6 +22,7 @@ namespace Butler {
                 return _Instance;
             }
         }
+        public bool Enabled { get; set; } = true;
 
         //--> PROPERTIES <--//
         private string _Name;

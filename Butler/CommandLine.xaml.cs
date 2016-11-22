@@ -59,6 +59,7 @@ namespace Butler {
             bool matchFound = false;
 
             foreach(UserModule mod in ModuleLoader.ModuleLoadOrder.Values) {
+                if(!mod.Enabled) { continue; }
                 mod.RegisteredCommands.ToList().ForEach(kvp => {
 
                     if(kvp.Value.Match(_query).Success) {

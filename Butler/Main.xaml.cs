@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -28,6 +29,7 @@ namespace Butler {
 
         CommandLine CMD;
         public bool Ready = false;
+        List<int> SelectedLoadOrders = new List<int>();
 
         #region Hotkey Registration
         HotkeyHandler kHandler;
@@ -39,8 +41,11 @@ namespace Butler {
             kHandler.Dispose();
         }
         #endregion
+
         //Current Hotkey = WinKey + Escape
         private void HotkeyWasPressed() {
+            
+            //Toggle command line visibilty on global hotkey press
             switch(CMD.Visibility) {
                 case Visibility.Visible:
                 CMD.Hide();
@@ -68,6 +73,27 @@ namespace Butler {
 
             this.Loaded += SetupComponents;
             this.StateChanged += MainWindow_StateChanged;
+
+            this.ModuleDataGrid.SelectionChanged += ModuleDataGrid_SelectionChanged;
+            this.Bu_ToggleActive.Click += (sender, e) => {
+                SelectedLoadOrders.ForEach(ld => {
+                    ModuleLoader.ModuleLoadOrder[ld].Enabled = !ModuleLoader.ModuleLoadOrder[ld].Enabled;
+                });
+
+                ModuleDataGrid.ItemsSource = null;
+                ModuleDataGrid.ItemsSource = ModuleLoader.ModuleLoadOrder;
+            };
+        }
+
+        private void ModuleDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            //Disable Toggle Active button if there are no items selected
+            Bu_ToggleActive.IsEnabled = !(ModuleDataGrid.SelectedItems.Count == 0);
+            if(ModuleDataGrid.SelectedItems.Count == 0) { return; }
+
+            SelectedLoadOrders = new List<int>();
+            foreach(var kvp in ModuleDataGrid.SelectedItems) {
+                SelectedLoadOrders.Add(((KeyValuePair<int, UserModule>)kvp).Key);
+            }
         }
 
         private void MainWindow_StateChanged(object sender, EventArgs e) {
@@ -81,6 +107,8 @@ namespace Butler {
         }
 
         private void SetupComponents(object sender, RoutedEventArgs e) {
+
+            //Setup the command line interface
             CMD = CommandLine.GetInstance();
 
             //Taskbar notification icon
@@ -99,6 +127,5 @@ namespace Butler {
             ModuleLoader.LoadAll();
             ModuleDataGrid.ItemsSource = ModuleLoader.ModuleLoadOrder;
         }
-
     }
 }
