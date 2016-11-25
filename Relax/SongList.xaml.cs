@@ -61,6 +61,7 @@ namespace Relax {
 
         private void SearchInput_KeyDown(object sender, KeyEventArgs e) {
             if(e.Key == Key.Enter) {
+                SearchList.Items.Clear();
                 FillPaths(SearchInput.Text);
                 FillList();
             }
@@ -83,9 +84,15 @@ namespace Relax {
 
             List<string> files = Directory.GetFiles(songPath, "*", SearchOption.AllDirectories).Where(path => Hooker.validExtensions.Contains(Path.GetExtension(path).ToLower()) || (Hooker.IsShortcut(path) && Hooker.validExtensions.Contains(Path.GetExtension(Hooker.ResolveShortcut(path))))).ToList();
 
-            if(files.Count == 0) { SearchList.Items.Clear(); return; }
+            List<string> matchingFiles = new List<string>();
+            foreach(string s in files) {
+                if(Regex.Match(Path.GetFileNameWithoutExtension(s), input).Success) {
+                    matchingFiles.Add(s);
+                }
+            }
 
-            Paths = files;
+            if(files.Count == 0) { SearchList.Items.Clear(); return; }
+            Paths = matchingFiles;
         }
 
         public void FillList() {

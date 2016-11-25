@@ -99,9 +99,11 @@ namespace Butler {
         private void MainWindow_StateChanged(object sender, EventArgs e) {
             switch(this.WindowState) {
                 case WindowState.Minimized: ShowInTaskbar = false;
+                    Visibility = Visibility.Hidden;
                     break;
                 case WindowState.Maximized:
                 case WindowState.Normal: ShowInTaskbar = true;
+                    Visibility = Visibility.Visible;
                     break;
             }
         }
@@ -114,6 +116,8 @@ namespace Butler {
             //Taskbar notification icon
             TaskbarIconManager.AddItem("Show", () => {
                 WindowState = WindowState.Normal;
+                ShowInTaskbar = true;
+                Visibility = Visibility.Visible;
             });
             TaskbarIconManager.AddItem("Exit", () => {
                 System.Windows.Application.Current.Shutdown(0);

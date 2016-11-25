@@ -47,6 +47,11 @@ namespace Butler {
             }
         }
 
+        /// <summary>
+        /// Searches through all modules to see if any one of their registered regex's 
+        /// matches the user input, if it does, we invoke the OnCommandReceived function in the
+        /// modules hook class
+        /// </summary>
         private void InitiateCommand() {
             string _query = Input.Text;
             if (string.IsNullOrWhiteSpace(_query)) {
