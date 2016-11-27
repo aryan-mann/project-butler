@@ -41,9 +41,9 @@ namespace MusicPlayer {
         SongList SL_Instance;
 
         private Dictionary<string, Regex> _RegisteredCommands = new Dictionary<string, Regex>() {
-            ["relax"] = new Regex("play ?(anything|something|random|any|whatever)"),
-            ["find song"] = new Regex("find ?song (?<song>.+)"),
-            ["all songs"] = new Regex("all ?songs?")
+            ["random"] = new Regex("play ?(anything|something|random|any|whatever)"),
+            ["specific"] = new Regex("(play|play song|song) (?<song>.+)"),
+            ["list all"] = new Regex("(all|list) ?songs?")
         };
         public override Dictionary<string, Regex> RegisteredCommands {
             get {
@@ -52,15 +52,15 @@ namespace MusicPlayer {
         }
 
         public static string[] validExtensions = new string[] {
-            ".mp3", ".m4a", ".ogg", ".wav", ".flv", ".wmv", ".ink", ".Ink"
+            ".mp3", ".m4a", ".ogg", ".wav", ".flv", ".wmv", ".ink", ".Ink", ".flac"
         };
 
         public override void OnCommandRecieved(string CommandName, string UserInput) {
-            if(CommandName == "relax") {
+            if(CommandName == "random") {
                 PlayRandom();
-            } else if(CommandName == "find song") {
+            } else if(CommandName == "specific") {
                 PlayThis(RegisteredCommands[CommandName].Match(UserInput).Groups["song"].Value);
-            } else if(CommandName == "all songs") {
+            } else if(CommandName == "list all") {
                 PlayAll();
             }
         }
