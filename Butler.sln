@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Browser", "Browser\Browser.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Youtube", "Youtube\Youtube.csproj", "{526CC3B9-7926-4CC4-9796-B3335450ABCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Music Player", "MusicPlayer\Music Player.csproj", "{862A286B-03B5-4240-B30C-ACCC158CE362}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{526CC3B9-7926-4CC4-9796-B3335450ABCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{526CC3B9-7926-4CC4-9796-B3335450ABCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{526CC3B9-7926-4CC4-9796-B3335450ABCA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{862A286B-03B5-4240-B30C-ACCC158CE362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{862A286B-03B5-4240-B30C-ACCC158CE362}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{862A286B-03B5-4240-B30C-ACCC158CE362}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{862A286B-03B5-4240-B30C-ACCC158CE362}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
