@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ModuleAPI;
 
-namespace Relax {
+namespace MusicPlayer {
 
     [ApplicationHook]
     public class Hooker : ModuleAPI.Module {

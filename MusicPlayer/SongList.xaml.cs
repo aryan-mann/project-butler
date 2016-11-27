@@ -14,7 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Relax {
+namespace MusicPlayer {
 
     /// <summary>
     /// Interaction logic for SongList.xaml
@@ -86,7 +86,7 @@ namespace Relax {
 
             List<string> matchingFiles = new List<string>();
             foreach(string s in files) {
-                if(Regex.Match(Path.GetFileNameWithoutExtension(s), input).Success) {
+                if(Regex.Match(Path.GetFileNameWithoutExtension(s).ToLower(), input.ToLower()).Success) {
                     matchingFiles.Add(s);
                 }
             }
