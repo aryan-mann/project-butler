@@ -22,11 +22,9 @@ using Newtonsoft.Json;
 
 namespace Butler {
 
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window {
 
+        //Singular Instance of the User Input prompt
         CommandLine CMD;
         public bool Ready = false;
         List<int> SelectedLoadOrders = new List<int>();
@@ -42,6 +40,30 @@ namespace Butler {
         }
         #endregion
 
+        private void SetupComponents(object sender, RoutedEventArgs e) {
+            //Setup the command line interface
+            CMD = CommandLine.GetInstance();
+
+            //Taskbar notification icon
+            TaskbarIconManager.AddItem("Show", () => {
+                WindowState = WindowState.Normal;
+                ShowInTaskbar = true;
+                Visibility = Visibility.Visible;
+            });
+            TaskbarIconManager.AddItem("Exit", () => {
+                System.Windows.Application.Current.Shutdown(0);
+            });
+
+            TaskbarIconManager.CommitItems();
+            TaskbarIconManager.SetVisible(true);
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
+            //Load all modules on application start
+            ModuleLoader.LoadAll();
+            ModuleDataGrid.ItemsSource = ModuleLoader.ModuleLoadOrder;
+        }
+        
         //Current Hotkey = WinKey + Escape
         private void HotkeyWasPressed() {
             
@@ -66,15 +88,17 @@ namespace Butler {
             this.SourceInitialized += Main_HotkeyRegister;  //Inside Hotkey Registration Region
             this.Closing += Main_HotkeyDeregister;          //Inside Hotkey Registration Region
 
-            this.Closing += (sender, e) => {
+            //When the application is closing, remove the taskbar icon
+            this.Closed += (sender, e) => {
                 TaskbarIconManager.Dispose();
-                System.Windows.Application.Current.Shutdown(0);
             };
 
             this.Loaded += SetupComponents;
             this.StateChanged += MainWindow_StateChanged;
 
             this.ModuleDataGrid.SelectionChanged += ModuleDataGrid_SelectionChanged;
+
+            // Enables/Disables the selected modules
             this.Bu_ToggleActive.Click += (sender, e) => {
                 SelectedLoadOrders.ForEach(ld => {
                     ModuleLoader.ModuleLoadOrder[ld].Enabled = !ModuleLoader.ModuleLoadOrder[ld].Enabled;
@@ -85,7 +109,9 @@ namespace Butler {
             };
         }
 
+        //Manage selected modules when selection is changed
         private void ModuleDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            
             //Disable Toggle Active button if there are no items selected
             Bu_ToggleActive.IsEnabled = !(ModuleDataGrid.SelectedItems.Count == 0);
             if(ModuleDataGrid.SelectedItems.Count == 0) { return; }
@@ -96,6 +122,7 @@ namespace Butler {
             }
         }
 
+        //Hide/Show in taskbar depending on window visibility
         private void MainWindow_StateChanged(object sender, EventArgs e) {
             switch(this.WindowState) {
                 case WindowState.Minimized: ShowInTaskbar = false;
@@ -108,28 +135,6 @@ namespace Butler {
             }
         }
 
-        private void SetupComponents(object sender, RoutedEventArgs e) {
-
-            //Setup the command line interface
-            CMD = CommandLine.GetInstance();
-
-            //Taskbar notification icon
-            TaskbarIconManager.AddItem("Show", () => {
-                WindowState = WindowState.Normal;
-                ShowInTaskbar = true;
-                Visibility = Visibility.Visible;
-            });
-            TaskbarIconManager.AddItem("Exit", () => {
-                System.Windows.Application.Current.Shutdown(0);
-            });
-
-            TaskbarIconManager.CommitItems();
-            TaskbarIconManager.SetActive(true);
-        }
-
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
-            ModuleLoader.LoadAll();
-            ModuleDataGrid.ItemsSource = ModuleLoader.ModuleLoadOrder;
-        }
+        
     }
 }

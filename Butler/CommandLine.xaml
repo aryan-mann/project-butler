@@ -5,12 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Butler"
         mc:Ignorable="d"
-        Title="CommandLine" Height="109" Width="600" WindowStyle="None" WindowStartupLocation="CenterOwner" Visibility="Visible">
-    <Grid x:Name="Grd" Background="#FFF1F1F1">
-        <TextBox x:Name="Input" Text="Enter Command Here" VerticalAlignment="Top" Margin="5,5,5,0" Height="55" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="36" Background="White" MaxLines="1"/>
-        <StatusBar VerticalAlignment="Bottom" VerticalContentAlignment="Center" Height="32" Background="#FFBBBBBB">
-            <Label x:Name="CurrentStatus" Content="Good to go!"/>
-        </StatusBar>
-
+        Title="CommandLine" WindowStyle="None" WindowStartupLocation="Manual" Visibility="Visible" Background="#00000000" ResizeMode="NoResize" AllowsTransparency="True" Height="144">
+    <Grid x:Name="Grd" Background="#00000000" Height="144">
+        <TextBox x:Name="Input" Text="Enter Command Here" Margin="0" VerticalContentAlignment="Center" FontSize="72" Background="#BF232425" MaxLines="1" Foreground="White" BorderBrush="{x:Null}" BorderThickness="0" TextDecorations="{x:Null}" SelectionBrush="#99FFFFFF" FontWeight="Bold" />
     </Grid>
 </Window>

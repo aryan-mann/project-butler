@@ -79,9 +79,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Results.xaml.cs">
-      <DependentUpon>Results.xaml</DependentUpon>
-    </Compile>
     <Compile Include="TaskbarIconManager.cs" />
     <Compile Include="UserModule.cs" />
     <Page Include="CommandLine.xaml">
@@ -104,10 +101,6 @@
       <DependentUpon>Main.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Results.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ModuleLoader.cs" />

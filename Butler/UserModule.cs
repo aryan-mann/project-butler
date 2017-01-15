@@ -84,6 +84,7 @@ namespace Butler {
             }
         }
 
+        //A string that lists all available regex commands
         private string _CommandStrings;
         public string CommandStrings {
             get {
@@ -105,6 +106,7 @@ namespace Butler {
             OnCommandRecievedMethod = ModuleType.GetMethod("OnCommandRecieved");
         }
 
+        //Indicate to the Module that a command has been received for it 
         public void GiveRegexCommand(string _key, string _query) {
             if(!RegisteredCommands.Keys.Contains(_key)) { return; }
             
@@ -113,6 +115,7 @@ namespace Butler {
             });
         }
 
+        //Generically get the value of a property of the Module
         private T GetPropertyValue<T>(string name) {
             PropertyInfo pInfo = ModuleType.GetProperty(name);
             if(pInfo == null) { return default(T); }
@@ -123,15 +126,19 @@ namespace Butler {
             } catch { return default(T); }
 
         }
-        //----------------------------------------------------->
 
+        //----------------------------------------------------->
+        //A collection of the main class of all modules and their instances
         public static Dictionary<Type, object> InstanceCollection { get; private set; } = new Dictionary<Type, object>();
 
         public static UserModule FromType(Type t) {
             return new UserModule(t);
         }
-        public static Task<UserModule> FromTypeAsync(Type t) {
-            return new Task<UserModule>(()=>FromType(t));
+        public static async Task<UserModule> FromTypeAsync(Type t) {
+            Task<UserModule> mod =  new Task<UserModule>(()=>FromType(t));
+            await mod;
+
+            return mod.Result;
         }
 
     }

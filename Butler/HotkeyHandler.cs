@@ -1,5 +1,4 @@
-﻿#define DEBUG
-
+﻿
 using System;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -9,9 +8,13 @@ using System.Windows.Interop;
 
 namespace Butler {
 
+    // Oh god, this is some weird PInvoke stuff
+    // used to register a global hotkey
+    // Sometimes you have to write stuff that
+    // is messy and garbage, I am sorry jesus.
     public class HotkeyHandler : IDisposable {
 
-
+        //Keycode of Windows Key
         public const int WM_HOTKEY = 0x0312;
 
         [DllImport("user32.dll")]
@@ -44,14 +47,8 @@ namespace Butler {
 
         private void SetupHotKey(IntPtr handle) {
             bool b = RegisterHotKey(handle, GetType().GetHashCode(), 0x0008, 0x1B);
-            if (!b) {
-                Console.WriteLine("Hotkey Registration Failed");
-            }
-#if DEBUG
-            else {
-                Console.WriteLine("Hotkey Registration Succeeded");
-            }
-#endif
+
+            Console.WriteLine("Hotkey Registration " + (b ? "Succeeded :)" : "Failed :("));
         }
 
         public void Dispose() {

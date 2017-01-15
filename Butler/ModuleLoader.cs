@@ -10,6 +10,8 @@ using ModuleAPI;
 namespace Butler {
 
     public class ModuleLoader {
+
+        //Where Modules are stored
         public static string ModuleDirectory {
             get {
                 string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Modules");
@@ -18,8 +20,10 @@ namespace Butler {
                 return path;
             }
         }
+        //Loaded modules and the order they are called in
         public static Dictionary<int, UserModule> ModuleLoadOrder { get; private set; } = new Dictionary<int, UserModule>();
 
+        //Search for modules in all folders inside the Modules directory
         public static void LoadAll() {
             string[] directories = Directory.GetDirectories(ModuleDirectory, "*", SearchOption.TopDirectoryOnly);
             ModuleLoadOrder?.Clear();
@@ -35,11 +39,12 @@ namespace Butler {
                             ModuleLoadOrder.Add(index, um);
                         } else { index++; }
                     } while(canUse == false);
-
                 }
             });
 
         }
+
+        //Load a module given the path of the directory it is in
         private static UserModule GetModuleFromDirectory(string directory) {
             string[] files = Directory.GetFiles(directory, "*.dll", SearchOption.AllDirectories);
 
@@ -47,6 +52,9 @@ namespace Butler {
             files.ToList().ForEach(file => {
                 Assembly asm = Assembly.LoadFrom(file);
 
+                //Get the entry class of a module:- 
+                //1. Should a child of Module class
+                //2. Should have ApplicationHook attribute
                 List<Type> startClasses = asm.GetTypes().Where(t =>
                     (t.IsClass) && 
                     (t.BaseType == typeof(ModuleAPI.Module)) &&
