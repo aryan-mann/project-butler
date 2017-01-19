@@ -57,7 +57,7 @@ namespace Butler {
             TaskbarIconManager.CommitItems();
             TaskbarIconManager.SetVisible(true);
         }
-
+                
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
             //Load all modules on application start
             ModuleLoader.LoadAll();
@@ -77,10 +77,9 @@ namespace Butler {
                 CMD.Show();
                 break;
             }
-
+            
         }
-
-
+        
         public MainWindow() {
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
@@ -107,6 +106,14 @@ namespace Butler {
                 ModuleDataGrid.ItemsSource = null;
                 ModuleDataGrid.ItemsSource = ModuleLoader.ModuleLoadOrder;
             };
+        }
+
+        //Menu bar button events
+        private void MenuAbout_Clicked(object sender, RoutedEventArgs e) {
+            System.Windows.MessageBox.Show("Project Butler was developed by Aryan Mann", "Hey!", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        private void MenuExit_Clicked(object sender, RoutedEventArgs e) {
+            System.Windows.Application.Current.Shutdown(0);
         }
 
         //Manage selected modules when selection is changed

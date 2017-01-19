@@ -4,6 +4,83 @@
              xmlns:local="clr-namespace:Butler"
              StartupUri="Main.xaml">
     <Application.Resources>
-         
+        <Style x:Key="DarkDataGridColumnHeader" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#FF232425"/>
+            <Setter Property="Foreground" Value="#FFF1F1F1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style x:Key="DarkDataGridRow" TargetType="DataGridRow">
+            <Setter Property="Background" Value="#FF4D4E4F"/>
+            <Setter Property="Foreground" Value="#FFF1F1F1"/>
+        </Style>
+        
+        <!-- 
+            NORMAL:-
+                Background: #FF232425
+                Foreground: #FFAEB2B6
+                Border: #FF111111
+            HOVERED:-
+                Background: #FF232425
+                Foreground: #FFF1F1F1
+                Border: #FFF1F1F1        
+            PRESSED:-
+                Background: #FF232425
+                Foreground: #FFF1F1F1
+                Border: #FF232425
+        -->
+
+        <Style x:Key="DarkButton" TargetType="Button">
+            <Setter Property="Background" Value="#FF232425"/>
+            <Setter Property="Foreground" Value="#FFF1F1F1"/>
+            <Setter Property="BorderBrush" Value="#FFC9C9C9"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="FontSize" Value="16"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Content="{TemplateBinding Content}" TextBlock.TextAlignment="Center" />
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True" >
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF878585"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF272727 "/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style x:Key="DarkButtonAlt" TargetType="Button">
+            <Setter Property="Background" Value="#FF4D4E4F"/>
+            <Setter Property="Foreground" Value="#FFF1F1F1"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="15,0,15,0"/>
+        </Style>
+
+        <Style x:Key="DarkScroll" TargetType="ScrollBar">
+            <Setter Property="Background" Value="#FF4D4E4F"/>
+        </Style>
+
+        <Style x:Key="DarkScrollViewer" TargetType="ScrollViewer">
+            <Setter Property="Background" Value="#FF232425"/>
+        </Style>
+
+        <Style x:Key="DarkMenu" TargetType="Menu">
+            <Setter Property="Background" Value="#FF232425"/>
+            <Setter Property="Foreground" Value="#FFF1F1F1"/>
+            <Setter Property="Height" Value="25"/>
+        </Style>
+        
+
     </Application.Resources>
 </Application>

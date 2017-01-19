@@ -127,7 +127,8 @@ namespace Butler {
 
         }
 
-        //----------------------------------------------------->
+        //<----------------------------------------------------->
+
         //A collection of the main class of all modules and their instances
         public static Dictionary<Type, object> InstanceCollection { get; private set; } = new Dictionary<Type, object>();
 
