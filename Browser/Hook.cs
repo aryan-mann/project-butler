@@ -21,7 +21,7 @@ namespace Browser {
         public override Dictionary<string, Regex> RegisteredCommands {
             get {
                 return new Dictionary<string, Regex>() {
-                    ["search"] = new Regex(@"search (?<url>.+)"),
+                    ["search"] = new Regex(@"^search (?<url>.+)$"),
                     ["resume"] = new Regex(@"^sr$")
                 };
             }
