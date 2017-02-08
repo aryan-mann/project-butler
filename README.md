@@ -1,3 +1,5 @@
+```NOTE: Currently having some problems with dependancy management.```
+
 # Project Butler `0.1`
 Project Butler is a simple tool that enables applications to hook into a simple command based GUI in order to make
 users more productive. The user can press a system wide hotkey to bring up a GUI that can detect commands and serve them to 
