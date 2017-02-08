@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using ModuleAPI;
 
 namespace Butler {
@@ -50,25 +48,26 @@ namespace Butler {
 
             UserModule mod = null;
             files.ToList().ForEach(file => {
-                Assembly asm = Assembly.LoadFrom(file);
+                Assembly asm = Assembly.LoadFile(file);
 
                 //Get the entry class of a module:- 
                 //1. Should a child of Module class
                 //2. Should have ApplicationHook attribute
+
                 List<Type> startClasses = asm.GetTypes().Where(t =>
-                    (t.IsClass) && 
+                    (t.IsClass) &&
                     (t.BaseType == typeof(ModuleAPI.Module)) &&
                     (t.GetCustomAttribute<ApplicationHookAttribute>() != null)
                 ).ToList();
-                
-                if(startClasses?.Count == 0) { return; }
-                Type startupClass = startClasses[0];
 
-                mod = UserModule.FromType(startupClass);
-                return;
+
+                if(startClasses.Count > 0) {
+                    Type startupClass = startClasses[0];
+                    mod = UserModule.FromType(startupClass);
+                }
             });
-
-            return mod ?? null;
+            
+            return mod;
         }
     }
 

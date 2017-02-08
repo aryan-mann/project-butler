@@ -3,12 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Butler"
         mc:Ignorable="d"
         Title="Main" Height="600" Width="900" Background="#00000000">
     <Grid Background="#FF232425" Margin="0,0,0,0">
         <DockPanel Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Stretch">
-            <Menu Style="{StaticResource DarkMenu}" DockPanel.Dock="Top" Height="25">
+            <Menu Style="{StaticResource DarkMenu}" DockPanel.Dock="Top">
                 <Menu.Resources>
                     <Style TargetType="MenuItem">
                         <Setter Property="Background" Value="#FF4D4E4F"/>
@@ -37,6 +36,6 @@
                 </DataGrid.Columns>
             </DataGrid>
         </ScrollViewer>
-        <Button x:Name="Bu_ToggleActive" Content="Toggle Active" HorizontalAlignment="Left" Margin="5,0,0,5" VerticalAlignment="Bottom" Width="150" Height="30" IsEnabled="True" Style="{StaticResource DarkButton}" FontSize="14" />
+        <Button x:Name="BuToggleActive" Content="Toggle Active" HorizontalAlignment="Left" Margin="5,0,0,5" VerticalAlignment="Bottom" Width="150" Height="30" IsEnabled="True" Style="{StaticResource DarkButton}" FontSize="14" />
     </Grid>
 </Window>

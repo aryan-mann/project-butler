@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -12,89 +11,89 @@ namespace Butler {
 
         //---> INSTANCE MANAGEMENT <---//
         public Type ModuleType { get; private set; }
-        private object _Instance;
+        private object _instance;
         public object Instance {
             get {
                 if(ModuleType == null) { return null; }
-                if(_Instance != null) { return _Instance; }
+                if(_instance != null) { return _instance; }
 
-                _Instance = Activator.CreateInstance(ModuleType);
-                return _Instance;
+                _instance = Activator.CreateInstance(ModuleType);
+                return _instance;
             }
         }
         public bool Enabled { get; set; } = true;
 
         //--> PROPERTIES <--//
-        private string _Name;
+        private string _name;
         public string Name {
             get {
-                if(!string.IsNullOrWhiteSpace(_Name)) { return _Name; }
+                if(!string.IsNullOrWhiteSpace(_name)) { return _name; }
 
-                _Name = GetPropertyValue<string>("Name") ?? "";
-                return _Name;
+                _name = GetPropertyValue<string>("Name") ?? "";
+                return _name;
             }
         }
 
-        private string _SemVer;
+        private string _semVer;
         public string SemVer {
             get {
-                if(!string.IsNullOrWhiteSpace(_SemVer)) { return _SemVer; }
+                if(!string.IsNullOrWhiteSpace(_semVer)) { return _semVer; }
 
-                _SemVer = GetPropertyValue<string>("SemVer") ?? "0.1.0";
-                return _SemVer;
+                _semVer = GetPropertyValue<string>("SemVer") ?? "0.1.0";
+                return _semVer;
             }
         }
 
-        private string _Author;
+        private string _author;
         public string Author {
             get {
-                if(!string.IsNullOrWhiteSpace(_Author)) { return _Author; }
+                if(!string.IsNullOrWhiteSpace(_author)) { return _author; }
 
-                _Author = GetPropertyValue<string>("Author") ?? "";
-                return _Author;
+                _author = GetPropertyValue<string>("Author") ?? "";
+                return _author;
             }
         }
 
-        private Uri _Website;
+        private Uri _website;
         public Uri Website {
             get {
-                if(_Website != null) { return _Website; }
+                if(_website != null) { return _website; }
 
-                _Website = GetPropertyValue<Uri>("Website");
-                return _Website;
+                _website = GetPropertyValue<Uri>("Website");
+                return _website;
             }
         }
 
-        public string _BaseDirectory;
+        private string _baseDirectory;
         public string BaseDirectory {
             get {
-                if(!string.IsNullOrWhiteSpace(_BaseDirectory)) { return _BaseDirectory; }
-                _BaseDirectory = GetPropertyValue<string>("BaseDirectory");
-                return _BaseDirectory;
+                if(!string.IsNullOrWhiteSpace(_baseDirectory)) { return _baseDirectory; }
+                _baseDirectory = GetPropertyValue<string>("BaseDirectory");
+                return _baseDirectory;
             }
         }
 
-        private Dictionary<string, Regex> _RegisteredCommands;
+        private Dictionary<string, Regex> _registeredCommands;
         public Dictionary<string, Regex> RegisteredCommands {
             get {
-                if(_RegisteredCommands != null) { return _RegisteredCommands; }
+                if(_registeredCommands != null) { return _registeredCommands; }
 
-                _RegisteredCommands = GetPropertyValue<Dictionary<string, Regex>>("RegisteredCommands");
-                return _RegisteredCommands;
+                _registeredCommands = GetPropertyValue<Dictionary<string, Regex>>("RegisteredCommands");
+                return _registeredCommands;
             }
         }
 
         //A string that lists all available regex commands
-        private string _CommandStrings;
+        private string _commandStrings;
         public string CommandStrings {
             get {
-                if(_CommandStrings != null) { return _CommandStrings; }
+                if(_commandStrings != null) { return _commandStrings; }
                 string joined = "";
                 foreach(Regex r in RegisteredCommands.Values.ToList()) {
-                    joined += " | [ " + r.ToString() + " ]";
+                    joined += " | [ " + r + " ]";
                 }
-                _CommandStrings = joined.Substring(3);
-                return _CommandStrings;
+                _commandStrings = joined.Substring(3);
+                return _commandStrings;
             }
         }
 
@@ -107,11 +106,11 @@ namespace Butler {
         }
 
         //Indicate to the Module that a command has been received for it 
-        public void GiveRegexCommand(string _key, string _query) {
-            if(!RegisteredCommands.Keys.Contains(_key)) { return; }
+        public void GiveRegexCommand(string key, string query) {
+            if(!RegisteredCommands.Keys.Contains(key)) { return; }
             
             OnCommandRecievedMethod.Invoke(Instance, new object[] {
-                _key, _query
+                key, query
             });
         }
 

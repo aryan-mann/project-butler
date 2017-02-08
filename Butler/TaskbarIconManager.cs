@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Butler {
-    
+
     //How the taskbar icon is rendered
     public class DarkToolStripRenderer: ToolStripRenderer {
 
@@ -18,7 +15,7 @@ namespace Butler {
 
         protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e) {
             base.OnRenderToolStripBackground(e);
-            e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(35,36,37)), e.ToolStrip.ClientRectangle);
+            e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(35, 36, 37)), e.ToolStrip.ClientRectangle);
         }
 
         protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e) {
@@ -27,44 +24,38 @@ namespace Butler {
         }
 
     }
-        
+
     public static class TaskbarIconManager {
 
         //NotifyIcon = Taskbar Icon
-        private static NotifyIcon _Instance;
+        private static NotifyIcon _instance;
         public static NotifyIcon Instance {
             get {
-                if(_Instance == null) {
-                    _Instance = new NotifyIcon() {
-                        Visible = true,
-                        Icon = SystemIcons.Application,
-                        Text = "Text",
-                        BalloonTipIcon = ToolTipIcon.Info,
-                        BalloonTipText = "Balloon Text",
-                        BalloonTipTitle = "Balloon Title",
-                        ContextMenuStrip = DefaultContextMenuStrip
-                    };
-                }
-                return _Instance;
+                _instance = _instance ?? new NotifyIcon() {
+                    Visible = true,
+                    Icon = SystemIcons.Application,
+                    Text = "Text",
+                    BalloonTipIcon = ToolTipIcon.Info,
+                    BalloonTipText = "Balloon Text",
+                    BalloonTipTitle = "Balloon Title",
+                    ContextMenuStrip = DefaultContextMenuStrip
+                };
+                return _instance;
             }
         }
 
         //The foundation for our custom context menu
-        private static ContextMenuStrip DefaultContextMenuStrip {
-            get {
-                return new ContextMenuStrip() {
-                    ShowCheckMargin = false,
-                    ShowImageMargin = false,
-                    AutoSize = true,
-                    LayoutStyle = ToolStripLayoutStyle.Flow,
-                    Renderer = new DarkToolStripRenderer()
-                };
-            }
-        }
+        private static ContextMenuStrip DefaultContextMenuStrip => new ContextMenuStrip() {
+            ShowCheckMargin = false,
+            ShowImageMargin = false,
+            AutoSize = true,
+            LayoutStyle = ToolStripLayoutStyle.Flow,
+            Renderer = new DarkToolStripRenderer()
+        };
 
         //List of menu items inside the taskbar context menu
         public static Dictionary<string, Action> MenuItems = new Dictionary<string, Action>();
-        
+
         //Adding and removing items is not reflected until commit items is called
         public static bool AddItem(string name, Action function) {
             if(!MenuItems.ContainsKey(name)) {
@@ -89,11 +80,11 @@ namespace Butler {
             foreach(var kvp in MenuItems) {
                 //Initialize Button
                 ToolStripMenuItem tsb = new ToolStripMenuItem() {
-                    Text = kvp.Key.ToString(),
+                    Text = kvp.Key,
                     TextAlign = ContentAlignment.MiddleCenter,
                     DisplayStyle = ToolStripItemDisplayStyle.Text,
-                    BackColor = Color.FromArgb(35,36,37),
-                    ForeColor = Color.FromArgb(241,241,241)
+                    BackColor = Color.FromArgb(35, 36, 37),
+                    ForeColor = Color.FromArgb(241, 241, 241)
                 };
                 //Events
                 tsb.Click += (sender, e) => {
@@ -101,7 +92,7 @@ namespace Butler {
                 };
 
                 tsb.MouseEnter += (sender, e) => {
-                    tsb.BackColor = Color.FromArgb(77, 78, 79);                    
+                    tsb.BackColor = Color.FromArgb(77, 78, 79);
                 };
                 tsb.MouseLeave += (sender, e) => {
                     tsb.BackColor = Color.FromArgb(35, 36, 37);
@@ -124,7 +115,7 @@ namespace Butler {
             SetVisible(false);
             Instance.Dispose();
         }
-        
+
     }
 
 }

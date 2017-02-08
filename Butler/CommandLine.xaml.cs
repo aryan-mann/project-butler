@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 
@@ -14,30 +11,25 @@ namespace Butler {
     public partial class CommandLine : Window {
 
         //Singleton-esque method of getting the command line 
-        public static CommandLine GetInstance() {
-            if (CmdInstance == null) {
-                CmdInstance = new CommandLine();
-            }
-            return CmdInstance;
-        }
-        static CommandLine CmdInstance = null; 
+        private static CommandLine _cmdInstance = new CommandLine();
+        public static CommandLine GetInstance() => _cmdInstance ?? new CommandLine();
 
         private CommandLine() {
             InitializeComponent();
 
-            this.SourceInitialized += CommandLine_SourceInitialized;
-            this.Activated += CommandLine_Activated;
-            this.GotFocus += CommandLine_Activated;
+            SourceInitialized += CommandLine_SourceInitialized;
+            Activated += CommandLine_Activated;
+            GotFocus += CommandLine_Activated;
 
             //Hide when first shown
-            this.Loaded += (sender, e) => {
+            Loaded += (sender, e) => {
                 Hide();
             };
 
-            this.PreviewKeyDown += CommandLine_PreviewKeyDown;
+            PreviewKeyDown += CommandLine_PreviewKeyDown;
 
             //Hide when focus is lost
-            this.Deactivated += (sender, e) => {
+            Deactivated += (sender, e) => {
                 Hide();
             };
         }
@@ -58,8 +50,8 @@ namespace Butler {
         matches the user input, if it does, we invoke the OnCommandReceived function in the
         modules hook class */
         private void InitiateCommand() {
-            string _query = Input.Text;
-            if (string.IsNullOrWhiteSpace(_query)) {
+            string query = Input.Text;
+            if (string.IsNullOrWhiteSpace(query)) {
                 //CurrentStatus.Content = "Empty Command!";
                 return;
             }
@@ -71,12 +63,12 @@ namespace Butler {
             //Check if user input matches Regexes' of enabled Modules
             foreach(UserModule mod in ModuleLoader.ModuleLoadOrder.Values) {
                 if(!mod.Enabled) { continue; }
+
                 mod.RegisteredCommands.ToList().ForEach(kvp => {
-                    if(kvp.Value.Match(_query).Success) {
+                    if(kvp.Value.Match(query).Success) {
                         selectedModule = mod;
                         selectedRegexKey = kvp.Key;
                         matchFound = true;
-                        return;
                     }
                 });
 
@@ -89,14 +81,14 @@ namespace Butler {
                 return;
             }
 
-            CmdInstance.Hide();
+            _cmdInstance.Hide();
                         
-            selectedModule.GiveRegexCommand(selectedRegexKey, _query);
+            selectedModule.GiveRegexCommand(selectedRegexKey, query);
         }
 
         // When window is shown, put focus on the command text
         private void CommandLine_Activated(object sender, EventArgs e) {
-            this.Activate();
+            Activate();
             Input.Focus();
             Keyboard.ClearFocus();
             Keyboard.Focus(Input);
@@ -105,9 +97,9 @@ namespace Butler {
 
         // Place textbox on the bottom of the screen
         private void CommandLine_SourceInitialized(object sender, EventArgs e) {
-            this.Width = SystemParameters.PrimaryScreenWidth;
-            this.Left = 0;
-            this.Top = SystemParameters.PrimaryScreenHeight - this.Height;
+            Width = SystemParameters.PrimaryScreenWidth;
+            Left = 0;
+            Top = SystemParameters.PrimaryScreenHeight - Height;
         }
 
         

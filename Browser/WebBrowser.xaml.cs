@@ -1,18 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Browser {
 
@@ -35,7 +25,7 @@ namespace Browser {
 
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
                         
-            this.KeyDown += (sender, e) => {
+            KeyDown += (sender, e) => {
                 if(e.Key == Key.Escape) {
                     UWeb.Dispose();
                     Close();
@@ -58,11 +48,11 @@ namespace Browser {
                     e.Handled = true;
                     try {
                         ShowPage(NavUrl.Text);
-                    } catch { }
+                    } catch(Exception ex) { Console.WriteLine(ex.Message); }
                 }
             };
 
-            this.Loaded += (sender, e) => {
+            Loaded += (sender, e) => {
                 IntPtr hWnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
                 //If you allow transparency on the window, the web browser does not render
                 //By using WinAPI, we can bypass that bug by setting the window properties manually
