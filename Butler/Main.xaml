@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Main" Height="600" Width="900" Background="#00000000">
+        Title="Main" Height="600" Width="900" Background="#00000000" Icon="pack://siteoforigin:,,,/Resources/butlerlogo2.png">
     <Grid Background="#FF232425" Margin="0,0,0,0">
         <DockPanel Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Stretch">
             <Menu Style="{StaticResource DarkMenu}" DockPanel.Dock="Top">

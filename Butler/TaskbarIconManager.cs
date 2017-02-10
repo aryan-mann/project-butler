@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Butler.Properties;
 
 namespace Butler {
 
@@ -33,11 +34,11 @@ namespace Butler {
             get {
                 _instance = _instance ?? new NotifyIcon() {
                     Visible = true,
-                    Icon = SystemIcons.Application,
-                    Text = "Text",
+                    Icon = Icon.FromHandle(Resources.ButlerLogo2.GetHicon()),
+                    Text = @"Text",
                     BalloonTipIcon = ToolTipIcon.Info,
-                    BalloonTipText = "Balloon Text",
-                    BalloonTipTitle = "Balloon Title",
+                    BalloonTipText = @"Balloon Text",
+                    BalloonTipTitle = @"Balloon Title",
                     ContextMenuStrip = DefaultContextMenuStrip
                 };
                 return _instance;
