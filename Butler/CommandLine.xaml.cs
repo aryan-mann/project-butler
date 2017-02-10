@@ -8,11 +8,15 @@ namespace Butler {
     /// <summary>
     /// Interaction logic for CommandLine.xaml
     /// </summary>
-    public partial class CommandLine : Window {
+    public partial class CommandLine: Window {
 
         //Singleton-esque method of getting the command line 
         private static CommandLine _cmdInstance = new CommandLine();
-        public static CommandLine GetInstance() => _cmdInstance ?? new CommandLine();
+
+        public static CommandLine GetInstance() {
+            _cmdInstance = _cmdInstance ?? new CommandLine();
+            return _cmdInstance;
+        }
 
         private CommandLine() {
             InitializeComponent();
@@ -36,10 +40,10 @@ namespace Butler {
 
         // Control window visibility using keyboard
         private void CommandLine_PreviewKeyDown(object sender, KeyEventArgs e) {
-            if (e.Key == Key.Escape) {
+            if(e.Key == Key.Escape) {
                 Visibility = Visibility.Collapsed;
                 e.Handled = true;
-            } else if (e.Key == Key.Enter && Input.IsKeyboardFocused) {
+            } else if(e.Key == Key.Enter && Input.IsKeyboardFocused) {
                 InitiateCommand();
                 e.Handled = true;
             }
@@ -51,7 +55,7 @@ namespace Butler {
         modules hook class */
         private void InitiateCommand() {
             string query = Input.Text;
-            if (string.IsNullOrWhiteSpace(query)) {
+            if(string.IsNullOrWhiteSpace(query)) {
                 //CurrentStatus.Content = "Empty Command!";
                 return;
             }
@@ -82,7 +86,7 @@ namespace Butler {
             }
 
             _cmdInstance.Hide();
-                        
+
             selectedModule.GiveRegexCommand(selectedRegexKey, query);
         }
 
@@ -102,6 +106,6 @@ namespace Butler {
             Top = SystemParameters.PrimaryScreenHeight - Height;
         }
 
-        
+
     }
 }
