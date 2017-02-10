@@ -21,7 +21,7 @@
             </Menu>
         </DockPanel>
         <ScrollViewer Style="{StaticResource DarkScrollViewer}" Margin="0,25,0,40" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible">
-            <DataGrid HorizontalScrollBarVisibility="Disabled" x:Name="ModuleDataGrid" AutoGenerateColumns="False" Background="#FF232425" RowHeaderWidth="0" BorderBrush="{x:Null}" VerticalScrollBarVisibility="Disabled" Height="494" Width="959">
+            <DataGrid HorizontalScrollBarVisibility="Disabled" x:Name="ModuleDataGrid" AutoGenerateColumns="False" Background="#FF232425" RowHeaderWidth="0" BorderBrush="{x:Null}" VerticalScrollBarVisibility="Disabled" Height="494">
                 <DataGrid.Resources>
                     <Style BasedOn="{StaticResource DarkDataGridColumnHeader}" TargetType="DataGridColumnHeader"/>
                     <Style BasedOn="{StaticResource DarkDataGridRow}" TargetType="DataGridRow"/>

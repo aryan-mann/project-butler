@@ -23,7 +23,7 @@ namespace Butler {
         }
         public bool Enabled { get; set; } = true;
 
-        //--> PROPERTIES <--//
+        //--> PROPERTIES OF THE MODULE <--//
         private string _name;
         public string Name {
             get {
@@ -83,8 +83,10 @@ namespace Butler {
             }
         }
 
-        //A string that lists all available regex commands
         private string _commandStrings;
+        /// <summary>
+        /// A list of Regex's transformed into a string seperated by a comma
+        /// </summary>
         public string CommandStrings {
             get {
                 if(_commandStrings != null) { return _commandStrings; }
@@ -97,24 +99,31 @@ namespace Butler {
             }
         }
 
-        private MethodInfo OnCommandRecievedMethod;
+        /// <summary>
+        /// Invoke commands more easily by caching information on this method
+        /// </summary>
+        private MethodInfo _onCommandRecievedMethod;
 
         private UserModule(Type t) {
             ModuleType = t;
-
-            OnCommandRecievedMethod = ModuleType.GetMethod("OnCommandRecieved");
+            _onCommandRecievedMethod = ModuleType.GetMethod("OnCommandRecieved");
         }
 
         //Indicate to the Module that a command has been received for it 
         public void GiveRegexCommand(string key, string query) {
             if(!RegisteredCommands.Keys.Contains(key)) { return; }
             
-            OnCommandRecievedMethod.Invoke(Instance, new object[] {
+            _onCommandRecievedMethod.Invoke(Instance, new object[] {
                 key, query
             });
         }
 
-        //Generically get the value of a property of the Module
+        /// <summary>
+        /// Try and get the value of a property of a module
+        /// </summary>
+        /// <typeparam name="T">Datatype of the value</typeparam>
+        /// <param name="name">Name of the value</param>
+        /// <returns></returns>
         private T GetPropertyValue<T>(string name) {
             PropertyInfo pInfo = ModuleType.GetProperty(name);
             if(pInfo == null) { return default(T); }
@@ -128,7 +137,9 @@ namespace Butler {
 
         //<----------------------------------------------------->
 
-        //A collection of the main class of all modules and their instances
+        /// <summary>
+        /// A dictionary of all the Startup Classes of all modules and their instances
+        /// </summary>
         public static Dictionary<Type, object> InstanceCollection { get; private set; } = new Dictionary<Type, object>();
 
         public static UserModule FromType(Type t) {
@@ -140,7 +151,6 @@ namespace Butler {
 
             return mod.Result;
         }
-
     }
 
 }
