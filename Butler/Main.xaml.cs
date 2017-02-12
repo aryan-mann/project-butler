@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
+using Application = System.Windows.Application;
 
 namespace Butler {
 
     public partial class MainWindow : Window {
 
         //Singular Instance of the User Input prompt
-        CommandLine _cmd;
+        private CommandLine Cmd { get; set; }= CommandLine.GetInstance();
         public bool Ready = false;
-        List<int> _selectedLoadOrders = new List<int>();
 
         #region Hotkey Registration
         HotkeyHandler _kHandler;
@@ -25,7 +27,7 @@ namespace Butler {
 
         private void SetupComponents(object sender, RoutedEventArgs e) {
             //Setup the command line interface
-            _cmd = CommandLine.GetInstance();
+            Cmd = Cmd ?? CommandLine.GetInstance();
 
             //Taskbar notification icon
             TaskbarIconManager.AddItem("Show", () => {
@@ -39,30 +41,77 @@ namespace Butler {
 
             TaskbarIconManager.CommitItems();
             TaskbarIconManager.SetVisible(true);
+            
+            LoadedModules.SelectionChanged += LoadedModulesOnSelectionChanged;
         }
-                
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
-            //Load all modules on application start
-            try {
-                ModuleLoader.LoadAll();
-            } catch(System.Reflection.ReflectionTypeLoadException rl) {
-                MessageBox.Show(rl.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+
+        // New item from Loaded Modules selected
+        private void LoadedModulesOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs) {
+            ListBoxItem item = (ListBoxItem) LoadedModules.SelectedItem;
+            if(item == null) { return; }
+
+            KeyValuePair<int, UserModule> val = (KeyValuePair<int, UserModule>) item.DataContext;
+            if(val.Value == null) { return; }
+
+            DisplayInformationFor(val.Value, val.Key);
+        }
+
+        private void DisplayInformationFor(UserModule um, int order) {
+            UmName.Content = um.Name;
+            UmCommands.Items.Clear();
+
+            foreach (KeyValuePair<string, Regex> pair in um.RegisteredCommands) {
+                UmCommands.Items.Add(new ListBoxItem() {
+                    Content = pair.Value,
+                    DataContext = pair
+                });
             }
 
-            ModuleDataGrid.ItemsSource = ModuleLoader.ModuleLoadOrder;
+            UmVersion.Content = um.SemVer;
+            UmAuthor.Content = um.Author;
+            UmWebsite.Content = um.Website;
+            UmDirectory.Content = um.BaseDirectory;
+            UmCommandCount.Content = um.RegisteredCommands.Count.ToString();
+
         }
-        
-        //Current Hotkey = WinKey + Escape
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
+            //Load all modules on application start
+            ModuleLoader.LoadAll();
+            SyncModules();
+        }
+
+        // Syncs ModuleLoader.ModuleLoadOrder and LoadedModules.Items
+        private void SyncModules() {
+            LoadedModules.Items.Clear();
+            foreach (KeyValuePair<int, UserModule> pair in ModuleLoader.ModuleLoadOrder) {
+                LoadedModules.Items.Add(new ListBoxItem() {
+                    Content = pair.Value.Name,
+                    DataContext = pair
+                });
+            }
+        }
+
+        /* Right Menu Button Events (START) */
+        private void AboutButton_Click(object sender, RoutedEventArgs e) {
+            System.Windows.MessageBox.Show("Developed By Aryan Mann", "Hey!", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        private void RemoteButton_Click(object sender, RoutedEventArgs e) {
+            
+        }
+        /* Right Menu Button Events (END) */
+
+        // Current Hotkey = WinKey + Escape
         private void HotkeyWasPressed() {
             
             //Toggle command line visibilty on global hotkey press
-            switch(_cmd.Visibility) {
+            switch(Cmd.Visibility) {
                 case Visibility.Visible:
-                _cmd.Hide();
+                Cmd.Hide();
                 break;
                 case Visibility.Hidden:
                 case Visibility.Collapsed:
-                _cmd.Show();
+                Cmd.Show();
                 break;
             }
             
@@ -82,42 +131,10 @@ namespace Butler {
 
             Loaded += SetupComponents;
             StateChanged += MainWindow_StateChanged;
-
-            ModuleDataGrid.SelectionChanged += ModuleDataGrid_SelectionChanged;
-
-            // Enables/Disables the selected modules
-            BuToggleActive.Click += (sender, e) => {
-                _selectedLoadOrders.ForEach(ld => {
-                    ModuleLoader.ModuleLoadOrder[ld].Enabled = !ModuleLoader.ModuleLoadOrder[ld].Enabled;
-                });
-
-                ModuleDataGrid.ItemsSource = null;
-                ModuleDataGrid.ItemsSource = ModuleLoader.ModuleLoadOrder;
-            };
         }
 
-        //Menu bar button events
-        private void MenuAbout_Clicked(object sender, RoutedEventArgs e) {
-            MessageBox.Show("Project Butler was developed by Aryan Mann", "Hey!", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-        private void MenuExit_Clicked(object sender, RoutedEventArgs e) {
-            Application.Current.Shutdown(0);
-        }
-
-        //Manage selected modules when selection is changed
-        private void ModuleDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            
-            //Disable Toggle Active button if there are no items selected
-            BuToggleActive.IsEnabled = (ModuleDataGrid.SelectedItems.Count != 0);
-            if(ModuleDataGrid.SelectedItems.Count == 0) { return; }
-
-            _selectedLoadOrders = new List<int>();
-            foreach(var kvp in ModuleDataGrid.SelectedItems) {
-                _selectedLoadOrders.Add(((KeyValuePair<int, UserModule>)kvp).Key);
-            }
-        }
-
-        //Hide/Show in taskbar depending on window visibility
+        
+        // Hide/Show in taskbar depending on window visibility
         private void MainWindow_StateChanged(object sender, EventArgs e) {
             switch(WindowState) {
                 case WindowState.Minimized: ShowInTaskbar = false;

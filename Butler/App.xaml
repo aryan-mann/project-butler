@@ -3,54 +3,54 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="Main.xaml">
     <Application.Resources>
-        <Style x:Key="DarkDataGridColumnHeader" TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="#FF232425"/>
-            <Setter Property="Foreground" Value="#FFF1F1F1"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="4"/>
-        </Style>
-        <Style x:Key="DarkDataGridRow" TargetType="DataGridRow">
-            <Setter Property="Background" Value="#FF4D4E4F"/>
-            <Setter Property="Foreground" Value="#FFF1F1F1"/>
-        </Style>
-        
-        <!-- 
-            NORMAL:-
-                Background: #FF232425
-                Foreground: #FFAEB2B6
-                Border: #FF111111
-            HOVERED:-
-                Background: #FF232425
-                Foreground: #FFF1F1F1
-                Border: #FFF1F1F1        
-            PRESSED:-
-                Background: #FF232425
-                Foreground: #FFF1F1F1
-                Border: #FF232425
-        -->
 
-        <Style x:Key="DarkButton" TargetType="Button">
-            <Setter Property="Background" Value="#FF232425"/>
-            <Setter Property="Foreground" Value="#FFF1F1F1"/>
-            <Setter Property="BorderBrush" Value="#FFC9C9C9"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="FontSize" Value="16"/>
+        <SolidColorBrush x:Key="Background" Color="#2B2B2B" />
+        <SolidColorBrush x:Key="BackgroundAccent" Color="#4C4C4C" />
+        <SolidColorBrush x:Key="Foreground" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="HalfAccent" Color="#81C4DA" />
+        <SolidColorBrush x:Key="PrimaryAccent" Color="#33ABD2" />
 
+
+        <!-- STACK PANEL -->
+        <Style TargetType="StackPanel" x:Key="Purple_StackPanel">
+            <Setter Property="Background" Value="{StaticResource BackgroundAccent}" />
+            <Setter Property="Orientation" Value="Vertical" />
+            <Setter Property="Margin" Value="5" />
+        </Style>
+
+        <Style TargetType="Label" x:Key="CenteredLabel">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="32" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Margin" Value="10,10,10,0" />
+        </Style>
+
+        <!-- BUTTON -->
+        <Style TargetType="Button" x:Key="Purple_SquareButton">
+            <Setter Property="Background" Value="{StaticResource PrimaryAccent}" />
+            <Setter Property="Foreground" Value="{StaticResource BackgroundAccent}" />
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Height" Value="70" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" Background="{TemplateBinding Background}">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Content="{TemplateBinding Content}" TextBlock.TextAlignment="Center" />
-                            </Grid>
-                        </Border>
-
+                        <Grid Margin="{TemplateBinding Margin}" x:Name="BackGrid" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Background="{TemplateBinding Background}">
+                            <TextBlock TextWrapping="Wrap"  Text="{TemplateBinding Content}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="{TemplateBinding FontSize}" Typography.Capitals="AllSmallCaps" />
+                        </Grid>
+                        
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True" >
-                                <Setter TargetName="border" Property="BorderBrush" Value="#FF878585"/>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#45C7F1" TargetName="BackGrid" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="BorderBrush" Value="#FF272727 "/>
+                                <Setter Property="Background" Value="#248DAF" TargetName="BackGrid" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -58,25 +58,44 @@
             </Setter>
         </Style>
         
-        <Style x:Key="DarkButtonAlt" TargetType="Button">
-            <Setter Property="Background" Value="#FF4D4E4F"/>
-            <Setter Property="Foreground" Value="#FFF1F1F1"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="15,0,15,0"/>
-        </Style>
+        <!-- LIST BOX ITEM -->
+        <Style TargetType="ListBoxItem" x:Key="Purple_ListBoxItem">
+            <Setter Property="Foreground" Value="{StaticResource Foreground}" />
+            <Setter Property="Cursor" Value="Hand" />   
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Grid x:Name="ItemGrid"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <ContentPresenter x:Name="ItemContent" Margin="5" />
+                        </Grid>
 
-        <Style x:Key="DarkScroll" TargetType="ScrollBar">
-            <Setter Property="Background" Value="#FF4D4E4F"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="TextBlock.Foreground" Value="{StaticResource BackgroundAccent}" TargetName="ItemContent" />
+                                <Setter Property="Background" Value="{StaticResource HalfAccent}" TargetName="ItemGrid" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="TextBlock.Foreground" Value="{StaticResource BackgroundAccent}" TargetName="ItemContent" />
+                                <Setter Property="Background" Value="{StaticResource PrimaryAccent}" TargetName="ItemGrid" />
+                                <Setter Property="TextBlock.FontWeight" Value="Bold" TargetName="ItemContent"/>
+                                <Setter Property="TextBlock.FontSize" Value="24" TargetName="ItemContent"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
-
-        <Style x:Key="DarkScrollViewer" TargetType="ScrollViewer">
-            <Setter Property="Background" Value="#FF232425"/>
-        </Style>
-
-        <Style x:Key="DarkMenu" TargetType="Menu">
-            <Setter Property="Background" Value="#FF232425"/>
-            <Setter Property="Foreground" Value="#FFF1F1F1"/>
-            <Setter Property="Height" Value="25"/>
+        
+        <!-- LIST BOX -->
+        <Style TargetType="ListBox" x:Key="Purple_ListBox">
+            <Setter Property="Background" Value="{StaticResource BackgroundAccent}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="{StaticResource Foreground}" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="MinWidth" Value="200" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="ItemContainerStyle" Value="{StaticResource Purple_ListBoxItem}" />
         </Style>
         
 

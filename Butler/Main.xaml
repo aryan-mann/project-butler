@@ -1,41 +1,38 @@
-﻿<Window x:Name="DragRectangle" x:Class="Butler.MainWindow"
+﻿<Window x:Class="Butler.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Main" Height="600" Width="900" Background="#00000000" Icon="pack://siteoforigin:,,,/Resources/butlerlogo2.png">
-    <Grid Background="#FF232425" Margin="0,0,0,0">
-        <DockPanel Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Stretch">
-            <Menu Style="{StaticResource DarkMenu}" DockPanel.Dock="Top">
-                <Menu.Resources>
-                    <Style TargetType="MenuItem">
-                        <Setter Property="Background" Value="#FF4D4E4F"/>
-                        <Setter Property="Height" Value="25"/>
-                        <Setter Property="BorderThickness" Value="0,0,1,0"/>
-                        <Setter Property="Padding" Value="10,0,10,0"/>
+        Title="Main" Height="600" Width="900" Icon="pack://siteoforigin:,,,/Resources/butlerlogo2.png" MinHeight="300" MinWidth="600">
+    <Grid Background="{StaticResource Background}">
+        <ListBox x:Name="LoadedModules" Style="{StaticResource Purple_ListBox}" HorizontalAlignment="Left" />
+        <Grid Background="{StaticResource BackgroundAccent}" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="90">
+            <StackPanel Style="{StaticResource Purple_StackPanel}" x:Name="SideMenu">
+                <Button Style="{StaticResource Purple_SquareButton}" Content="About" Click="AboutButton_Click" />
+                <Button Content="Remote" Click="RemoteButton_Click" />
+            </StackPanel>
+        </Grid>
+        <Grid Margin="200,0,90,0">
+            <Label x:Name="UmName" Content="Module Name" Style="{StaticResource CenteredLabel}" />
+            <ListBox x:Name="UmCommands" Background="{StaticResource Background}" Style="{StaticResource Purple_ListBox}" Margin="0,206,0,0" MinHeight="20"/>
+            <Grid Background="{StaticResource PrimaryAccent}" Height="138" Margin="0,68,0,0" VerticalAlignment="Top">
+                <Grid.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="Background" Value="{StaticResource BackgroundAccent}" />
+                        <Setter Property="Foreground" Value="White" />
                     </Style>
-                </Menu.Resources>
-                <MenuItem Header="_About" Click="MenuAbout_Clicked"/>
-                <MenuItem Header="_Exit" Click="MenuExit_Clicked"/>
-            </Menu>
-        </DockPanel>
-        <ScrollViewer Style="{StaticResource DarkScrollViewer}" Margin="0,25,0,40" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Visible">
-            <DataGrid HorizontalScrollBarVisibility="Disabled" x:Name="ModuleDataGrid" AutoGenerateColumns="False" Background="#FF232425" RowHeaderWidth="0" BorderBrush="{x:Null}" VerticalScrollBarVisibility="Disabled" Height="494">
-                <DataGrid.Resources>
-                    <Style BasedOn="{StaticResource DarkDataGridColumnHeader}" TargetType="DataGridColumnHeader"/>
-                    <Style BasedOn="{StaticResource DarkDataGridRow}" TargetType="DataGridRow"/>
-                </DataGrid.Resources>
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Key}" Width="75" Header="Load Order" IsReadOnly="True"/>
-                    <DataGridCheckBoxColumn Binding="{Binding Value.Enabled}" Width="50" Header="Active" IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding Value.Name}" Width="300" Header="Name" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Value.SemVer}" Width="100" Header="Version" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Value.Author}" Width="200" Header="Author" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Value.CommandStrings}" Width="300" Header="Commands" IsReadOnly="True"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </ScrollViewer>
-        <Button x:Name="BuToggleActive" Content="Toggle Active" HorizontalAlignment="Left" Margin="5,0,0,5" VerticalAlignment="Bottom" Width="150" Height="30" IsEnabled="True" Style="{StaticResource DarkButton}" FontSize="14" />
+                </Grid.Resources>
+                <Label Content="Version: " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="64"/>
+                <Label Content="Author: " HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="64"/>
+                <Label Content="Website: " HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="64"/>
+                <Label Content="Directory: " HorizontalAlignment="Left" Margin="10,102,0,0" VerticalAlignment="Top"/>
+                <Label x:Name="UmVersion" Content="" Margin="79,10,153,0" VerticalAlignment="Top"/>
+                <Label x:Name="UmAuthor" Content="" Margin="79,41,153,0" VerticalAlignment="Top"/>
+                <Label x:Name="UmWebsite" Content="" Margin="79,72,153,0" VerticalAlignment="Top"/>
+                <Label x:Name="UmDirectory" Content="" Margin="79,102,153,0" VerticalAlignment="Top"/>
+                <Label x:Name="UmCommandCount" Content="0" HorizontalAlignment="Right" Margin="0,10,10,10" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="82" Height="118" Background="{StaticResource PrimaryAccent}" Foreground="{StaticResource BackgroundAccent}" FontWeight="Bold" Width="138"/>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
