@@ -62,7 +62,7 @@ namespace Butler {
             UserModule mod = null;
             // Load each *.dll file found in the directory
             files.ToList().ForEach(file => {
-                Assembly asm = Assembly.LoadFile(file);
+                Assembly asm = Assembly.LoadFrom(file);
 
                 // Search for a type in the loaded assembly that:- 
                 // 1. Is a child of the Module class
