@@ -11,7 +11,7 @@ namespace Butler {
 
         protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e) {
             base.OnRenderToolStripBorder(e);
-            ControlPaint.DrawBorder(e.Graphics, e.AffectedBounds, Color.FromArgb(36, 171, 147), ButtonBorderStyle.Solid);
+            ControlPaint.DrawBorder(e.Graphics, e.AffectedBounds, Color.FromArgb(51, 171, 210), ButtonBorderStyle.Solid);
         }
 
         protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e) {

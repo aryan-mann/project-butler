@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
+using System.Windows.Media;
 using Application = System.Windows.Application;
 
 namespace Butler {
 
-    public partial class MainWindow : Window {
+    public partial class MainWindow: Window {
 
         //Singular Instance of the User Input prompt
-        private CommandLine Cmd { get; set; }= CommandLine.GetInstance();
+        private CommandLine Cmd { get; set; } = CommandLine.GetInstance();
         public bool Ready = false;
 
         #region Hotkey Registration
@@ -31,9 +31,10 @@ namespace Butler {
 
             //Taskbar notification icon
             TaskbarIconManager.AddItem("Show", () => {
-                WindowState = WindowState.Normal;
                 ShowInTaskbar = true;
                 Visibility = Visibility.Visible;
+                Activate();
+                WindowState = WindowState.Maximized;
             });
             TaskbarIconManager.AddItem("Exit", () => {
                 Application.Current.Shutdown(0);
@@ -41,10 +42,14 @@ namespace Butler {
 
             TaskbarIconManager.CommitItems();
             TaskbarIconManager.SetVisible(true);
-            
-            LoadedModules.SelectionChanged += LoadedModulesOnSelectionChanged;
-        }
 
+            LoadedModules.SelectionChanged += LoadedModulesOnSelectionChanged;
+
+            RemoteControlManager.CommandRecieved += command => {
+                Dispatcher.Invoke(() => { UserModule.FindAndGiveRegexCommand(command); });
+            };
+        }
+        
         // New item from Loaded Modules selected
         private void LoadedModulesOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs) {
             ListBoxItem item = (ListBoxItem) LoadedModules.SelectedItem;
@@ -53,14 +58,14 @@ namespace Butler {
             KeyValuePair<int, UserModule> val = (KeyValuePair<int, UserModule>) item.DataContext;
             if(val.Value == null) { return; }
 
-            DisplayInformationFor(val.Value, val.Key);
+            DisplayInformationFor(val.Value);
         }
 
-        private void DisplayInformationFor(UserModule um, int order) {
+        private void DisplayInformationFor(UserModule um) {
             UmName.Content = um.Name;
             UmCommands.Items.Clear();
 
-            foreach (KeyValuePair<string, Regex> pair in um.RegisteredCommands) {
+            foreach(KeyValuePair<string, Regex> pair in um.RegisteredCommands) {
                 UmCommands.Items.Add(new ListBoxItem() {
                     Content = pair.Value,
                     DataContext = pair
@@ -74,7 +79,7 @@ namespace Butler {
             UmCommandCount.Content = um.RegisteredCommands.Count.ToString();
 
         }
-
+        
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
             //Load all modules on application start
             ModuleLoader.LoadAll();
@@ -84,7 +89,7 @@ namespace Butler {
         // Syncs ModuleLoader.ModuleLoadOrder and LoadedModules.Items
         private void SyncModules() {
             LoadedModules.Items.Clear();
-            foreach (KeyValuePair<int, UserModule> pair in ModuleLoader.ModuleLoadOrder) {
+            foreach(KeyValuePair<int, UserModule> pair in ModuleLoader.ModuleLoadOrder) {
                 LoadedModules.Items.Add(new ListBoxItem() {
                     Content = pair.Value.Name,
                     DataContext = pair
@@ -94,29 +99,35 @@ namespace Butler {
 
         /* Right Menu Button Events (START) */
         private void AboutButton_Click(object sender, RoutedEventArgs e) {
-            System.Windows.MessageBox.Show("Developed By Aryan Mann", "Hey!", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Developed By Aryan Mann", "Hey!", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         private void RemoteButton_Click(object sender, RoutedEventArgs e) {
-            
+            if(!RemoteControlManager.ServerRunning) {
+                RemoteButton.Background = (Brush) Application.Current.Resources["On"];
+                RemoteControlManager.StartServer();
+            } else {
+                RemoteButton.Background = (Brush) Application.Current.Resources["Off"];
+                RemoteControlManager.StopServer();
+            }
         }
         /* Right Menu Button Events (END) */
 
         // Current Hotkey = WinKey + Escape
         private void HotkeyWasPressed() {
-            
+
             //Toggle command line visibilty on global hotkey press
             switch(Cmd.Visibility) {
                 case Visibility.Visible:
-                Cmd.Hide();
-                break;
+                    Cmd.Hide();
+                    break;
                 case Visibility.Hidden:
                 case Visibility.Collapsed:
-                Cmd.Show();
-                break;
+                    Cmd.Show();
+                    break;
             }
-            
+
         }
-        
+
         public MainWindow() {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
@@ -133,20 +144,22 @@ namespace Butler {
             StateChanged += MainWindow_StateChanged;
         }
 
-        
+
         // Hide/Show in taskbar depending on window visibility
         private void MainWindow_StateChanged(object sender, EventArgs e) {
             switch(WindowState) {
-                case WindowState.Minimized: ShowInTaskbar = false;
+                case WindowState.Minimized:
+                    ShowInTaskbar = false;
                     Visibility = Visibility.Hidden;
                     break;
                 case WindowState.Maximized:
-                case WindowState.Normal: ShowInTaskbar = true;
+                case WindowState.Normal:
+                    ShowInTaskbar = true;
                     Visibility = Visibility.Visible;
                     break;
             }
         }
 
-        
+
     }
 }

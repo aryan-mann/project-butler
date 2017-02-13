@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace Butler {
 
@@ -117,6 +116,39 @@ namespace Butler {
             _onCommandRecievedMethod.Invoke(Instance, new object[] {
                 key, query
             });
+        }
+
+        public static void FindAndGiveRegexCommand(string query) {
+
+            if(string.IsNullOrWhiteSpace(query)) {
+                return;
+            }
+
+            UserModule selectedModule = null;
+            string selectedRegexKey = "";
+            bool matchFound = false;
+
+            //Check if user input matches Regexes' of enabled Modules
+            foreach(UserModule mod in ModuleLoader.ModuleLoadOrder.Values) {
+                if(!mod.Enabled) { continue; }
+
+                mod.RegisteredCommands.ToList().ForEach(kvp => {
+                    if(kvp.Value.Match(query).Success) {
+                        selectedModule = mod;
+                        selectedRegexKey = kvp.Key;
+                        matchFound = true;
+                    }
+                });
+
+                if(matchFound) { break; }
+            }
+
+            //If a match is not found or the user input is invalid, select all user input text
+            if(!matchFound || selectedModule == null || string.IsNullOrWhiteSpace(selectedRegexKey)) {
+                return;
+            }
+
+            selectedModule.GiveRegexCommand(selectedRegexKey, query);
         }
 
         /// <summary>

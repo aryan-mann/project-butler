@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace Butler {
 
@@ -29,7 +30,7 @@ namespace Butler {
             Loaded += (sender, e) => {
                 Hide();
             };
-
+            
             PreviewKeyDown += CommandLine_PreviewKeyDown;
 
             //Hide when focus is lost
@@ -54,6 +55,7 @@ namespace Butler {
         matches the user input, if it does, we invoke the OnCommandReceived function in the
         modules hook class */
         private void InitiateCommand() {
+            
             string query = Input.Text;
             if(string.IsNullOrWhiteSpace(query)) {
                 //CurrentStatus.Content = "Empty Command!";
@@ -89,7 +91,7 @@ namespace Butler {
 
             selectedModule.GiveRegexCommand(selectedRegexKey, query);
         }
-
+        
         // When window is shown, put focus on the command text
         private void CommandLine_Activated(object sender, EventArgs e) {
             Activate();

@@ -10,6 +10,8 @@
         <SolidColorBrush x:Key="HalfAccent" Color="#81C4DA" />
         <SolidColorBrush x:Key="PrimaryAccent" Color="#33ABD2" />
 
+        <SolidColorBrush x:Key="Off" Color="#E63F1F" />
+        <SolidColorBrush x:Key="On" Color="#70E61F" />
 
         <!-- STACK PANEL -->
         <Style TargetType="StackPanel" x:Key="Purple_StackPanel">
@@ -30,9 +32,9 @@
         </Style>
 
         <!-- BUTTON -->
-        <Style TargetType="Button" x:Key="Purple_SquareButton">
+        <Style TargetType="Button" x:Key="DefaultSquareButton">
             <Setter Property="Background" Value="{StaticResource PrimaryAccent}" />
-            <Setter Property="Foreground" Value="{StaticResource BackgroundAccent}" />
+            <Setter Property="Foreground" Value="White" />
             <Setter Property="FontSize" Value="24" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="Height" Value="70" />
@@ -57,6 +59,28 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style TargetType="Button" BasedOn="{StaticResource DefaultSquareButton}" x:Key="White_Button">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Margin="{TemplateBinding Margin}" x:Name="BackGrid" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Background="{TemplateBinding Background}">
+                            <TextBlock TextWrapping="Wrap"  Text="{TemplateBinding Content}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="{TemplateBinding FontSize}" Typography.Capitals="AllSmallCaps" />
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#E9E9E9" TargetName="BackGrid" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#9C9C9C" TargetName="BackGrid" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         
         <!-- LIST BOX ITEM -->
         <Style TargetType="ListBoxItem" x:Key="Purple_ListBoxItem">
@@ -75,7 +99,7 @@
                                 <Setter Property="Background" Value="{StaticResource HalfAccent}" TargetName="ItemGrid" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="TextBlock.Foreground" Value="{StaticResource BackgroundAccent}" TargetName="ItemContent" />
+                                <Setter Property="TextBlock.Foreground" Value="{StaticResource Foreground}" TargetName="ItemContent" />
                                 <Setter Property="Background" Value="{StaticResource PrimaryAccent}" TargetName="ItemGrid" />
                                 <Setter Property="TextBlock.FontWeight" Value="Bold" TargetName="ItemContent"/>
                                 <Setter Property="TextBlock.FontSize" Value="24" TargetName="ItemContent"/>

@@ -9,8 +9,8 @@
         <ListBox x:Name="LoadedModules" Style="{StaticResource Purple_ListBox}" HorizontalAlignment="Left" />
         <Grid Background="{StaticResource BackgroundAccent}" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="90">
             <StackPanel Style="{StaticResource Purple_StackPanel}" x:Name="SideMenu">
-                <Button Style="{StaticResource Purple_SquareButton}" Content="About" Click="AboutButton_Click" />
-                <Button Content="Remote" Click="RemoteButton_Click" />
+                <Button x:Name="RemoteButton" Content="+" Background="{StaticResource Off}" Click="RemoteButton_Click" Style="{StaticResource White_Button}" Height="131" RenderTransformOrigin="0.5,0.5" Margin="0" HorizontalAlignment="Center" Width="80" />
+                <Button Style="{StaticResource DefaultSquareButton}" Content="About" Click="AboutButton_Click" />
             </StackPanel>
         </Grid>
         <Grid Margin="200,0,90,0">
@@ -19,8 +19,9 @@
             <Grid Background="{StaticResource PrimaryAccent}" Height="138" Margin="0,68,0,0" VerticalAlignment="Top">
                 <Grid.Resources>
                     <Style TargetType="Label">
-                        <Setter Property="Background" Value="{StaticResource BackgroundAccent}" />
+                        <Setter Property="Background" Value="{StaticResource PrimaryAccent}" />
                         <Setter Property="Foreground" Value="White" />
+                        <Setter Property="BorderThickness" Value="0" />
                     </Style>
                 </Grid.Resources>
                 <Label Content="Version: " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="64"/>
@@ -31,7 +32,7 @@
                 <Label x:Name="UmAuthor" Content="" Margin="79,41,153,0" VerticalAlignment="Top"/>
                 <Label x:Name="UmWebsite" Content="" Margin="79,72,153,0" VerticalAlignment="Top"/>
                 <Label x:Name="UmDirectory" Content="" Margin="79,102,153,0" VerticalAlignment="Top"/>
-                <Label x:Name="UmCommandCount" Content="0" HorizontalAlignment="Right" Margin="0,10,10,10" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="82" Height="118" Background="{StaticResource PrimaryAccent}" Foreground="{StaticResource BackgroundAccent}" FontWeight="Bold" Width="138"/>
+                <Label x:Name="UmCommandCount" Content="0" HorizontalAlignment="Right" Margin="0,10,10,10" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="82" Height="118" Background="{StaticResource PrimaryAccent}" Foreground="White" FontWeight="Bold" Width="138"/>
             </Grid>
         </Grid>
     </Grid>
