@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -24,6 +25,7 @@ namespace ModuleAPI
         // Thus, by getting it's directory, we can get BaseDirectory of the module
         public string BaseDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetAssembly(GetType()).CodeBase.Substring(8));
 
+        // TURN THIS INTO AN ORDERED DICTIONARY GOD DAMN IT
         public abstract Dictionary<string, Regex> RegisteredCommands { get; }
 
         /// <summary>

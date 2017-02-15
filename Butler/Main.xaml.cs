@@ -77,7 +77,7 @@ namespace Butler {
             UmWebsite.Content = um.Website;
             UmDirectory.Content = um.BaseDirectory;
             UmCommandCount.Content = um.RegisteredCommands.Count.ToString();
-
+            UmTrigger.Content = um.Prefix;
         }
         
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
