@@ -109,6 +109,8 @@ namespace Butler {
                 RemoteButton.Background = (Brush) Application.Current.Resources["Off"];
                 RemoteControlManager.StopServer();
             }
+
+            System.Diagnostics.Debug.WriteLine($"Connection Status: {RemoteControlManager.ServerRunningStatus}");
         }
         /* Right Menu Button Events (END) */
 

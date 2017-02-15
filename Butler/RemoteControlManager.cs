@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,13 @@ namespace Butler {
         public static bool ServerRunning { get; private set; }
         public static string ServerRunningStatus => ServerRunning ? "On" : "Off";
 
+        private static int _port = 4144;
+        public static int Port {
+            get { return _port; }
+            set { _port = (_port > 65535 || _port < 1024) ? 4144 : value; }
+        }
+        public static string PortText => Port.ToString();
+
         // Server stuff
         private static TcpListener _listener;
         private static TcpClient _client;
@@ -18,7 +26,12 @@ namespace Butler {
         public static event OnCommandRecieved CommandRecieved;
 
         static RemoteControlManager() {
-            _listener = new TcpListener(IPAddress.Any, 4144);
+            try {
+                _listener = new TcpListener(IPAddress.Any, 4144);
+            }
+            catch (Exception e) {
+                Console.WriteLine(e);
+            }
         }
 
         public static void StartServer() {
@@ -34,7 +47,6 @@ namespace Butler {
         
         static void CoreLoop() {
             _listener.Start();
-            System.Diagnostics.Debug.WriteLine("Listening at port 4144");
 
             while (ServerRunning) {
                 _client = _listener.AcceptTcpClient();
