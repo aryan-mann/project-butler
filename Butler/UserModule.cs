@@ -4,12 +4,13 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ModuleAPI;
 
 namespace Butler {
 
     public class UserModule {
 
-        //---> INSTANCE MANAGEMENT <---//
+        /* Instance Management */
         public Type ModuleType { get; private set; }
         private object _instance;
         public object Instance {
@@ -23,7 +24,7 @@ namespace Butler {
         }
         public bool Enabled { get; set; } = true;
 
-        //--> PROPERTIES OF THE MODULE <--//
+        /* Module Properties */
         private string _name;
         public string Name {
             get {
@@ -51,6 +52,16 @@ namespace Butler {
 
                 _author = GetPropertyValue<string>("Author") ?? "";
                 return _author;
+            }
+        }
+
+        private string _prefix;
+        public string Prefix {
+            get {
+                if(!string.IsNullOrWhiteSpace(_prefix)) { return _prefix; }
+
+                _prefix = GetPropertyValue<string>("Prefix") ?? "";
+                return _prefix;
             }
         }
 
@@ -83,26 +94,10 @@ namespace Butler {
             }
         }
 
-        private string _commandStrings;
-        /// <summary>
-        /// A list of Regex's transformed into a string seperated by a comma
-        /// </summary>
-        public string CommandStrings {
-            get {
-                if(_commandStrings != null) { return _commandStrings; }
-                string joined = "";
-                foreach(Regex r in RegisteredCommands.Values.ToList()) {
-                    joined += " | [ " + r + " ]";
-                }
-                _commandStrings = joined.Substring(3);
-                return _commandStrings;
-            }
-        }
-
         /// <summary>
         /// Invoke commands more easily by caching information on this method
         /// </summary>
-        private MethodInfo _onCommandRecievedMethod;
+        private readonly MethodInfo _onCommandRecievedMethod;
 
         private UserModule(Type t) {
             ModuleType = t;
@@ -110,47 +105,15 @@ namespace Butler {
         }
 
         //Indicate to the Module that a command has been received for it 
-        public void GiveRegexCommand(string key, string query) {
-            if(!RegisteredCommands.Keys.Contains(key)) { return; }
-            
+        public void GiveRegexCommand(Command cmd) {
+            if(!RegisteredCommands.Keys.Contains(cmd.LocalCommand)) { return; }
+
             _onCommandRecievedMethod.Invoke(Instance, new object[] {
-                key, query
+                cmd
             });
         }
 
-        public static void FindAndGiveRegexCommand(string query) {
-
-            if(string.IsNullOrWhiteSpace(query)) {
-                return;
-            }
-
-            UserModule selectedModule = null;
-            string selectedRegexKey = "";
-            bool matchFound = false;
-
-            //Check if user input matches Regexes' of enabled Modules
-            foreach(UserModule mod in ModuleLoader.ModuleLoadOrder.Values) {
-                if(!mod.Enabled) { continue; }
-
-                mod.RegisteredCommands.ToList().ForEach(kvp => {
-                    if(kvp.Value.Match(query).Success) {
-                        selectedModule = mod;
-                        selectedRegexKey = kvp.Key;
-                        matchFound = true;
-                    }
-                });
-
-                if(matchFound) { break; }
-            }
-
-            //If a match is not found or the user input is invalid, select all user input text
-            if(!matchFound || selectedModule == null || string.IsNullOrWhiteSpace(selectedRegexKey)) {
-                return;
-            }
-
-            selectedModule.GiveRegexCommand(selectedRegexKey, query);
-        }
-
+        // Get the value of a property of the ApplicationHook class of the modile
         /// <summary>
         /// Try and get the value of a property of a module
         /// </summary>
@@ -163,12 +126,54 @@ namespace Butler {
 
             try {
                 object ob = pInfo.GetValue(Instance);
-                if(ob == null) { return default(T); } else { return (T)ob; }
+                if(ob == null) { return default(T); } else { return (T) ob; }
             } catch { return default(T); }
 
         }
 
-        //<----------------------------------------------------->
+        /* STATIC METHODS */
+
+        /// <summary>
+        /// If a module accepts user input, give it the command
+        /// </summary>
+        /// <param name="query">User input</param>
+        /// <returns></returns>
+        public static bool FindAndGiveRegexCommand(string query) {
+
+            if(string.IsNullOrWhiteSpace(query)) {
+                return false;
+            }
+
+            UserModule selectedModule = null;
+            string selectedRegexKey = "";
+            bool matchFound = false;
+
+            Match m = Regex.Match(query, "^(?<first>.+?)\\s+(?<rest>.+)$");
+            string firstWord = m.Groups["first"].Value;
+            string rest = m.Groups["rest"].Value;
+
+            UserModule shortListModule = ModuleLoader.ModuleLoadOrder.Values.FirstOrDefault(val => val.Prefix == firstWord);
+            if(shortListModule != null) {
+                foreach(var rgxs in shortListModule.RegisteredCommands) {
+                    if(matchFound) { break; }
+
+                    if(rgxs.Value.Match(rest).Success) {
+                        selectedRegexKey = rgxs.Key;
+                        selectedModule = shortListModule;
+                        matchFound = true;
+                        break;
+                    }
+                }
+            }
+
+            //If a match is not found or the user input is invalid, select all user input text
+            if(!matchFound || selectedModule == null || string.IsNullOrWhiteSpace(selectedRegexKey)) {
+                return false;
+            }
+
+            selectedModule.GiveRegexCommand(new Command(shortListModule.RegisteredCommands[selectedRegexKey], rest, selectedRegexKey));
+            return true;
+        }
 
         /// <summary>
         /// A dictionary of all the Startup Classes of all modules and their instances
@@ -179,7 +184,7 @@ namespace Butler {
             return new UserModule(t);
         }
         public static async Task<UserModule> FromTypeAsync(Type t) {
-            Task<UserModule> mod =  new Task<UserModule>(()=>FromType(t));
+            Task<UserModule> mod = new Task<UserModule>(() => FromType(t));
             await mod;
 
             return mod.Result;

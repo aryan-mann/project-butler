@@ -23,7 +23,7 @@ namespace Butler {
         private static TcpClient _client;
 
         public delegate void OnCommandRecieved(string command);
-        public static event OnCommandRecieved CommandRecieved;
+        public static event OnCommandRecieved CommandRecieved;  
 
         static RemoteControlManager() {
             try {

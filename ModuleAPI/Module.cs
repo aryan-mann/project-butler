@@ -18,6 +18,7 @@ namespace ModuleAPI
         public abstract string SemVer { get; }
         public abstract string Author { get; }
         public abstract Uri Website { get; }
+        public abstract string Prefix { get; }
 
         // (**).CodeBase returns the location of the class library (.dll)
         // Thus, by getting it's directory, we can get BaseDirectory of the module
@@ -33,9 +34,8 @@ namespace ModuleAPI
         /// <summary>
         /// When a user input matches the Regex(s) provided by our module
         /// </summary>
-        /// <param name="commandName">Which module command was detected</param>
-        /// <param name="userInput">The users input which matches the command</param>
-        public abstract void OnCommandRecieved(string commandName, string userInput);
+        /// <param name="command">The command recieved</param>
+        public abstract void OnCommandRecieved(Command command);
 
         /// <summary>
         /// Opens the settings panel for the Module

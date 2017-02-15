@@ -11,6 +11,7 @@ namespace Browser {
         #region Properties
         public override string Author => "Aryan Mann";
         public override string Name => "Simple Browser";
+        public override string Prefix => "brws";
 
         public override Dictionary<string, Regex> RegisteredCommands => new Dictionary<string, Regex>() {
             ["search"] = new Regex(@"^search (?<url>.+)$"),
@@ -37,12 +38,12 @@ namespace Browser {
             }
         }
 
-        public override void OnCommandRecieved(string commandName, string userInput) {
-            if(commandName == "search") {
-                Match m = RegisteredCommands["search"].Match(userInput);
+        public override void OnCommandRecieved(Command cmd) {
+            if(cmd.LocalCommand == "search") {
+                Match m = RegisteredCommands["search"].Match(cmd.UserInput);
                 _lastUrl = m.Groups["url"].Value;
                 Instance.ShowPage(m.Groups["url"].Value);
-            } else if(commandName == "resume") {
+            } else if(cmd.LocalCommand == "resume") {
                 Instance.ShowPage(_lastUrl);
             }
         }
