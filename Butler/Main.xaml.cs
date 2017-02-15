@@ -45,8 +45,8 @@ namespace Butler {
 
             LoadedModules.SelectionChanged += LoadedModulesOnSelectionChanged;
 
-            RemoteControlManager.CommandRecieved += command => {
-                Dispatcher.Invoke(() => { UserModule.FindAndGiveRegexCommand(command); });
+            RemoteControlManager.CommandRecieved += (command, ipend) => {
+                Dispatcher.Invoke(() => { UserModule.FindAndGiveRegexCommand(command, ipend); });
             };
         }
         

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -137,8 +138,9 @@ namespace Butler {
         /// If a module accepts user input, give it the command
         /// </summary>
         /// <param name="query">User input</param>
+        /// <param name="requesterEndPoint">Which server requested it?</param>
         /// <returns></returns>
-        public static bool FindAndGiveRegexCommand(string query) {
+        public static bool FindAndGiveRegexCommand(string query, IPEndPoint requesterEndPoint = null) {
 
             if(string.IsNullOrWhiteSpace(query)) {
                 return false;
@@ -171,7 +173,7 @@ namespace Butler {
                 return false;
             }
 
-            selectedModule.GiveRegexCommand(new Command(shortListModule.RegisteredCommands[selectedRegexKey], rest, selectedRegexKey));
+            selectedModule.GiveRegexCommand(new Command(shortListModule.RegisteredCommands[selectedRegexKey], rest, selectedRegexKey, requesterEndPoint));
             return true;
         }
 

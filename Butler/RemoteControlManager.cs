@@ -22,7 +22,7 @@ namespace Butler {
         private static TcpListener _listener;
         private static TcpClient _client;
 
-        public delegate void OnCommandRecieved(string command);
+        public delegate void OnCommandRecieved(string command, IPEndPoint requester);
         public static event OnCommandRecieved CommandRecieved;  
 
         static RemoteControlManager() {
@@ -76,12 +76,12 @@ namespace Butler {
                 }
 
                 string fullMessage = new ASCIIEncoding().GetString(message, 0, bytesRead).Replace("\r", "");
-                InvokeOnCommandRecieved(fullMessage);
+                InvokeOnCommandRecieved(fullMessage, (IPEndPoint) tcpClient.Client.RemoteEndPoint);
             }
         }
 
         // Invoke safely
-        static void InvokeOnCommandRecieved(string command) => CommandRecieved?.Invoke(command);
+        static void InvokeOnCommandRecieved(string command, IPEndPoint requester) => CommandRecieved?.Invoke(command, requester);
     }
 
 }
