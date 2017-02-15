@@ -55,41 +55,10 @@ namespace Butler {
         matches the user input, if it does, we invoke the OnCommandReceived function in the
         modules hook class */
         private void InitiateCommand() {
-            
             string query = Input.Text;
-            if(string.IsNullOrWhiteSpace(query)) {
-                //CurrentStatus.Content = "Empty Command!";
-                return;
+            if (UserModule.FindAndGiveRegexCommand(query)) {
+                _cmdInstance.Hide();
             }
-
-            UserModule selectedModule = null;
-            string selectedRegexKey = "";
-            bool matchFound = false;
-
-            //Check if user input matches Regexes' of enabled Modules
-            foreach(UserModule mod in ModuleLoader.ModuleLoadOrder.Values) {
-                if(!mod.Enabled) { continue; }
-
-                mod.RegisteredCommands.ToList().ForEach(kvp => {
-                    if(kvp.Value.Match(query).Success) {
-                        selectedModule = mod;
-                        selectedRegexKey = kvp.Key;
-                        matchFound = true;
-                    }
-                });
-
-                if(matchFound) { break; }
-            }
-
-            //If a match is not found or the user input is invalid, select all user input text
-            if(!matchFound || selectedModule == null || string.IsNullOrWhiteSpace(selectedRegexKey)) {
-                Input.SelectAll();
-                return;
-            }
-
-            _cmdInstance.Hide();
-
-            selectedModule.GiveRegexCommand(selectedRegexKey, query);
         }
         
         // When window is shown, put focus on the command text
