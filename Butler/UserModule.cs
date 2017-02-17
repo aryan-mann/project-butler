@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -140,7 +141,7 @@ namespace Butler {
         /// <param name="query">User input</param>
         /// <param name="requesterEndPoint">Which server requested it?</param>
         /// <returns></returns>
-        public static bool FindAndGiveRegexCommand(string query, IPEndPoint requesterEndPoint = null) {
+        public static bool FindAndGiveRegexCommand(string query, TcpClient client = null) {
 
             if(string.IsNullOrWhiteSpace(query)) {
                 return false;
@@ -173,7 +174,7 @@ namespace Butler {
                 return false;
             }
 
-            selectedModule.GiveRegexCommand(new Command(shortListModule.RegisteredCommands[selectedRegexKey], rest, selectedRegexKey, requesterEndPoint));
+            selectedModule.GiveRegexCommand(new Command(shortListModule.RegisteredCommands[selectedRegexKey], rest, selectedRegexKey, client));
             return true;
         }
 

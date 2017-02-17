@@ -16,7 +16,7 @@
         </Grid>
         <Grid Margin="200,0,90,0">
             <Label x:Name="UmName" Content="Module Name" Style="{StaticResource CenteredLabel}" />
-            <ListBox x:Name="UmCommands" Background="{StaticResource Background}" Style="{StaticResource Purple_ListBox}" Margin="0,206,0,0" MinHeight="20"/>
+            <ListBox x:Name="UmCommands" Background="{StaticResource Background}" Style="{StaticResource Purple_ListBox}" Margin="0,237,0,0" MinHeight="20"/>
             <Grid Background="{StaticResource PrimaryAccent}" Height="169" Margin="0,68,0,0" VerticalAlignment="Top">
                 <Grid.Resources>
                     <Style TargetType="Label">

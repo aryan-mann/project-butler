@@ -26,6 +26,11 @@ namespace Butler {
         #endregion
 
         private void SetupComponents(object sender, RoutedEventArgs e) {
+
+            Closing += (o, args) => {
+                Application.Current.Shutdown();
+            };
+
             //Setup the command line interface
             Cmd = Cmd ?? CommandLine.GetInstance();
 
@@ -39,14 +44,13 @@ namespace Butler {
             TaskbarIconManager.AddItem("Exit", () => {
                 Application.Current.Shutdown(0);
             });
-
             TaskbarIconManager.CommitItems();
             TaskbarIconManager.SetVisible(true);
-
+            
             LoadedModules.SelectionChanged += LoadedModulesOnSelectionChanged;
 
-            RemoteControlManager.CommandRecieved += (command, ipend) => {
-                Dispatcher.Invoke(() => { UserModule.FindAndGiveRegexCommand(command, ipend); });
+            RemoteControlManager.CommandRecieved += (command, tcpClient) => {
+                Dispatcher.Invoke(() => { UserModule.FindAndGiveRegexCommand(command, tcpClient); });
             };
         }
         
@@ -61,6 +65,7 @@ namespace Butler {
             DisplayInformationFor(val.Value);
         }
 
+        // Changes UI based on which Module is selected
         private void DisplayInformationFor(UserModule um) {
             UmName.Content = um.Name;
             UmCommands.Items.Clear();
@@ -82,7 +87,7 @@ namespace Butler {
         
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
             //Load all modules on application start
-            ModuleLoader.LoadAll();
+            //ModuleLoader.LoadAll();
             SyncModules();
         }
 
