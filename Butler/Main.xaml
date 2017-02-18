@@ -3,14 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:Butler="clr-namespace:Butler"
+        xmlns:butler="clr-namespace:Butler"
         mc:Ignorable="d"
         Title="Main" Height="600" Width="900" Icon="pack://siteoforigin:,,,/Resources/butlerlogo2.png" MinHeight="300" MinWidth="600">
     <Grid Background="{StaticResource Background}">
         <ListBox x:Name="LoadedModules" Style="{StaticResource Purple_ListBox}" HorizontalAlignment="Left" />
         <Grid Background="{StaticResource BackgroundAccent}" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="90">
             <StackPanel Style="{StaticResource Purple_StackPanel}" x:Name="SideMenu">
-                <Button x:Name="RemoteButton" Content="{x:Static Butler:RemoteControlManager.PortText}" Background="{StaticResource Off}" Click="RemoteButton_Click" Style="{StaticResource White_Button}" Height="131" RenderTransformOrigin="0.5,0.5" Margin="0" HorizontalAlignment="Center" Width="80" />
+                <Button x:Name="RemoteButton" Content="{x:Static butler:RemoteControlManager.PortText}" Background="{StaticResource Off}" Click="RemoteButton_Click" Style="{StaticResource White_Button}" Height="131" RenderTransformOrigin="0.5,0.5" Margin="0" HorizontalAlignment="Center" Width="80" />
                 <Button Style="{StaticResource DefaultSquareButton}" Content="About" Click="AboutButton_Click" />
             </StackPanel>
         </Grid>

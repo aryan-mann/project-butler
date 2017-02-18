@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace ModuleAPI {
 
@@ -47,7 +43,7 @@ namespace ModuleAPI {
             }
             
             byte[] message = Encoding.UTF8.GetBytes($"\n{text}\n");
-            ((NetworkStream)Client.GetStream()).Write(message, 0, message.Length);
+            Client.GetStream().Write(message, 0, message.Length);
         }
     }
 

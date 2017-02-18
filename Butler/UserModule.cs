@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -139,7 +138,7 @@ namespace Butler {
         /// If a module accepts user input, give it the command
         /// </summary>
         /// <param name="query">User input</param>
-        /// <param name="requesterEndPoint">Which server requested it?</param>
+        /// <param name="client">Which client issued the command?</param>
         /// <returns></returns>
         public static bool FindAndGiveRegexCommand(string query, TcpClient client = null) {
 
@@ -158,6 +157,7 @@ namespace Butler {
             UserModule shortListModule = ModuleLoader.ModuleLoadOrder.Values.FirstOrDefault(val => val.Prefix == firstWord);
             if(shortListModule != null) {
                 foreach(var rgxs in shortListModule.RegisteredCommands) {
+
                     if(matchFound) { break; }
 
                     if(rgxs.Value.Match(rest).Success) {

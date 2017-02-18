@@ -52,9 +52,7 @@ namespace Browser {
 
         #region Unimplemented Methods
         public override void ConfigureSettings() { }
-
         public override void OnInitialized() { }
-
         public override void OnShutdown() { }
         #endregion
     }

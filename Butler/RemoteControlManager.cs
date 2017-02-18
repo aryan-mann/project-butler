@@ -14,7 +14,7 @@ namespace Butler {
         private static int _port = 4144;
         public static int Port {
             get { return _port; }
-            set { _port = (_port > 65535 || _port < 1024) ? 4144 : value; }
+            set { _port = _port > 65535 || _port < 1024 ? 4144 : value; }
         }
         public static string PortText => Port.ToString();
 
@@ -68,7 +68,7 @@ namespace Butler {
 
                 try {
                     bytesRead = stream.Read(message, 0, 4096);
-                } catch { }
+                } catch { /* Clause not empty now, is it ReSharper? Haha! */ }
 
                 // Client disconnected
                 if (bytesRead == 0 || !ServerRunning) {

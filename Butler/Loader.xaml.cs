@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 using static System.Diagnostics.Process;
 using static System.IO.Path;
 using static System.Reflection.Assembly;
@@ -30,7 +29,7 @@ namespace Butler
 
             double pointPerModule = 0;
             ModuleLoader.LoadingStarted += count => {
-                pointPerModule = (90/count);
+                pointPerModule = 90f/count;
                 Dispatcher.Invoke(() => {
                     Status.Text = "Loading modules";
                 });

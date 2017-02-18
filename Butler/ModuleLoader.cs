@@ -59,8 +59,7 @@ namespace Butler {
                         } else { index++; }
                     } while(canUse == false);
                 }
-
-                Task.Delay(500).Wait();
+                
             });
 
             LoadingEnded?.Invoke();
@@ -84,9 +83,9 @@ namespace Butler {
                 // 2. Has the ApplicationHook attribute (that can only be applied to one class)
 
                 List<Type> startClasses = asm.GetTypes().Where(t =>
-                    (t.IsClass) &&
-                    (t.BaseType == typeof(ModuleAPI.Module)) &&
-                    (t.GetCustomAttribute<ApplicationHookAttribute>() != null)
+                    t.IsClass &&
+                    t.BaseType == typeof(ModuleAPI.Module) &&
+                    t.GetCustomAttribute<ApplicationHookAttribute>() != null
                 ).ToList();
 
                 // If any class meeting these conditions is found,
