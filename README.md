@@ -1,4 +1,4 @@
-# Project Butler `0.2.1`
+# Project Butler `1.0.0`
 Project Butler allows you to use commands to do stuff basically. Through it's Modular approach, you can create your own Modules that listen for certain registered commands and do stuff based on the recieved commands. You can give commands through the desktop UI or through the TCP connection.
 
 ## What are Modules?
