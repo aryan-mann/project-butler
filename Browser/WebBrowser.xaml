@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         Title="WebBrowser" Height="400" Width="700" WindowStartupLocation="CenterScreen" WindowStyle="None">
     <Grid Margin="0,0,0,0" Background="White">
-        <TextBox x:Name="NavUrl" Height="30" Margin="0" TextWrapping="NoWrap" VerticalAlignment="Top" VerticalContentAlignment="Center" Padding="30,0,0,0" BorderBrush="#FFF1F1F1" Background="#FF2E2E2E" Foreground="#FFF1F1F1" BorderThickness="1,1,1,0"/>
+        <TextBox x:Name="NavUrl" Height="30" Margin="0" TextWrapping="NoWrap" FontWeight="Bold" VerticalAlignment="Top" VerticalContentAlignment="Center" Padding="30,0,0,0" BorderBrush="{x:Null}" Background="#FF2E2E2E" Foreground="#FFF1F1F1" BorderThickness="0" Text="Testing the text" FontSize="14"/>
         <WebBrowser x:Name="UWeb" Margin="0,30,0,0"/>
     </Grid>
 </Window>

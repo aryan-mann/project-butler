@@ -20,8 +20,8 @@ namespace Browser {
         public WebBrowser() {
             InitializeComponent();
 
-            Height = SystemParameters.PrimaryScreenHeight/1.4;
-            Width = SystemParameters.PrimaryScreenWidth/1.4;
+            Height = SystemParameters.PrimaryScreenHeight;
+            Width = SystemParameters.PrimaryScreenWidth;
 
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
                         
@@ -59,12 +59,14 @@ namespace Browser {
                 SetWindowLong(hWnd, -16, 0x80000000);
             };
         }
-
+            
         public void ShowPage(string url) {
             Visibility = Visibility.Visible;
-            Match m = Regex.Match(url, @"(https?|ftp):\/\/[^\s/$.?#].[^\s]*");
+            Match m = Regex.Match(url, @"^(https?:\/\/)?(www\.)(?<url>.+)$");
+            
             if(m.Success) {
-                UWeb.Navigate(m.ToString());
+                string sUrl = $@"http://www.{m.Groups["url"].Value}";
+                UWeb.Navigate(sUrl);
             } else {
                 UWeb.Navigate(@"https://www.duckduckgo.com/?q=" + url);
             }
