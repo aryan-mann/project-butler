@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ModuleAPI;
 using Application = System.Windows.Application;
 
 namespace Butler {
@@ -46,14 +49,38 @@ namespace Butler {
             });
             TaskbarIconManager.CommitItems();
             TaskbarIconManager.SetVisible(true);
-            
+
             LoadedModules.SelectionChanged += LoadedModulesOnSelectionChanged;
 
+            // Invokes commands recieved from TCP connections
             RemoteControlManager.CommandRecieved += (command, tcpClient) => {
-                Dispatcher.Invoke(() => { UserModule.FindAndGiveRegexCommand(command, tcpClient); });
+
+                Task.Factory.StartNew(() => {
+                    UserModule mod = null;
+                    Command cm = null;
+
+                    if(UserModule.FindResponsibleUserModule(command, out mod, out cm, tcpClient)) {
+                        Dispatcher.Invoke(() => {
+                            StatusMessage.Content = $"{tcpClient.Client.RemoteEndPoint} > [{mod.Name}] {cm.LocalCommand}";
+                            mod.GiveRegexCommand(cm);
+                        });
+                    }
+                });
+
+            };
+
+            RemoteControlManager.ClientConnected += client => {
+                Dispatcher.Invoke(() => {
+                    StatusMessage.Content = $"({client.Client.RemoteEndPoint}) has connected!";
+                });
+            };
+            RemoteControlManager.ClientDisconnected += client => {
+                Dispatcher.Invoke(() => {
+                    StatusMessage.Content = $"({client.Client.RemoteEndPoint}) has now disconnected.";
+                });
             };
         }
-        
+
         // New item from Loaded Modules selected
         private void LoadedModulesOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs) {
             ListBoxItem item = (ListBoxItem) LoadedModules.SelectedItem;
@@ -84,11 +111,13 @@ namespace Butler {
             UmCommandCount.Content = um.RegisteredCommands.Count.ToString();
             UmTrigger.Content = um.Prefix;
         }
-        
+
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
             //Load all modules on application start
             //ModuleLoader.LoadAll();
             SyncModules();
+
+
         }
 
         // Syncs ModuleLoader.ModuleLoadOrder and LoadedModules.Items
@@ -115,7 +144,7 @@ namespace Butler {
                 RemoteControlManager.StopServer();
             }
 
-            System.Diagnostics.Debug.WriteLine($"Connection Status: {RemoteControlManager.ServerRunningStatus}");
+            StatusMessage.Content = $"The server is now {(RemoteControlManager.ServerRunning ? "" : "not")} running.";
         }
         /* Right Menu Button Events (END) */
 

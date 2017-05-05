@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using ModuleAPI;
 
 namespace Butler {
@@ -135,18 +136,22 @@ namespace Butler {
         /* STATIC METHODS */
 
         /// <summary>
-        /// If a module accepts user input, give it the command
+        /// Find the user module responsible for handling the user input based on which Regex matched
         /// </summary>
         /// <param name="query">User input</param>
-        /// <param name="client">Which client issued the command?</param>
+        /// <param name="selectedModule">Module responsible for handling the query</param>
+        /// <param name="command">The command that was detected from user input</param>
+        /// <param name="client">Was it a remote command?</param>
         /// <returns></returns>
-        public static bool FindAndGiveRegexCommand(string query, TcpClient client = null) {
+        public static bool FindResponsibleUserModule(string query, out UserModule selectedModule, out Command command, TcpClient client = null) {
+
+            selectedModule = null;
+            command = null;
 
             if(string.IsNullOrWhiteSpace(query)) {
                 return false;
             }
-
-            UserModule selectedModule = null;
+            
             string selectedRegexKey = "";
             bool matchFound = false;
 
@@ -174,7 +179,8 @@ namespace Butler {
                 return false;
             }
 
-            selectedModule.GiveRegexCommand(new Command(shortListModule.RegisteredCommands[selectedRegexKey], rest, selectedRegexKey, client));
+            command = new Command(shortListModule.RegisteredCommands[selectedRegexKey], rest, selectedRegexKey, client);
+
             return true;
         }
 

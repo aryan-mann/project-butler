@@ -38,6 +38,8 @@ namespace ModuleAPI {
         public void Respond(string text) {
             if (string.IsNullOrWhiteSpace(text) || IsLocalCommand) { return; }
 
+            if(IsLocalCommand) { return; }
+
             if (!Client.Connected) {
                 Client.Connect((IPEndPoint) Client.Client.RemoteEndPoint);
             }

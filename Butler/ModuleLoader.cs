@@ -39,11 +39,15 @@ namespace Butler {
         /// Load all modules in the Module Directory
         /// </summary>
         public static void LoadAll() {
-            string[] directories = Directory.GetDirectories(ModuleDirectory, "*", SearchOption.TopDirectoryOnly);
             ModuleLoadOrder?.Clear();
 
-            LoadingStarted?.Invoke(directories.Length);
+            UserModule sysModule = UserModule.FromType(typeof(SystemCommands));
+            ModuleLoadOrder.Add(ModuleLoadOrder.Count, sysModule);
 
+            string[] directories = Directory.GetDirectories(ModuleDirectory, "*", SearchOption.TopDirectoryOnly);
+            LoadingStarted?.Invoke(directories.Length);
+            
+            // Search through all directories and add user modules
             directories.ToList().ForEach(dir => {
                 UserModule um = GetModuleFromDirectory(dir);
 
@@ -99,6 +103,7 @@ namespace Butler {
             
             return mod;
         }
+
     }
 
 }

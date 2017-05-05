@@ -7,8 +7,8 @@
         <SolidColorBrush x:Key="Background" Color="#2B2B2B" />
         <SolidColorBrush x:Key="BackgroundAccent" Color="#4C4C4C" />
         <SolidColorBrush x:Key="Foreground" Color="#FFFFFF" />
-        <SolidColorBrush x:Key="HalfAccent" Color="#81C4DA" />
-        <SolidColorBrush x:Key="PrimaryAccent" Color="#33ABD2" />
+        <SolidColorBrush x:Key="HalfAccent" Color="#585858" />
+        <SolidColorBrush x:Key="PrimaryAccent" Color="#282828" />
 
         <SolidColorBrush x:Key="Off" Color="#E63F1F" />
         <SolidColorBrush x:Key="On" Color="#70E61F" />
@@ -44,15 +44,15 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid Margin="{TemplateBinding Margin}" x:Name="BackGrid" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Background="{TemplateBinding Background}">
-                            <TextBlock TextWrapping="Wrap"  Text="{TemplateBinding Content}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="{TemplateBinding FontSize}" Typography.Capitals="AllSmallCaps" />
+                            <TextBlock x:Name="BackText" TextWrapping="Wrap"  Text="{TemplateBinding Content}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="{TemplateBinding FontSize}" Typography.Capitals="AllSmallCaps" />
                         </Grid>
                         
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#45C7F1" TargetName="BackGrid" />
+                                <Setter Property="Background" Value="{StaticResource HalfAccent}" TargetName="BackGrid" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#248DAF" TargetName="BackGrid" />
+                                <Setter Property="Background" Value="{StaticResource PrimaryAccent}" TargetName="BackGrid" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -95,8 +95,8 @@
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="TextBlock.Foreground" Value="{StaticResource BackgroundAccent}" TargetName="ItemContent" />
-                                <Setter Property="Background" Value="{StaticResource HalfAccent}" TargetName="ItemGrid" />
+                                <Setter Property="TextBlock.Foreground" Value="{StaticResource Foreground}" TargetName="ItemContent" />
+                                <Setter Property="Background" Value="{StaticResource PrimaryAccent}" TargetName="ItemGrid" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter Property="TextBlock.Foreground" Value="{StaticResource Foreground}" TargetName="ItemContent" />
@@ -111,7 +111,7 @@
         </Style>
         
         <!-- LIST BOX -->
-        <Style TargetType="ListBox" x:Key="Purple_ListBox">
+        <Style TargetType="ListBox" x:Key="Default_ListBox">
             <Setter Property="Background" Value="{StaticResource BackgroundAccent}" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Foreground" Value="{StaticResource Foreground}" />

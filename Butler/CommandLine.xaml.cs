@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using ModuleAPI;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace Butler {
@@ -55,9 +57,23 @@ namespace Butler {
         modules hook class */
         private void InitiateCommand() {
             string query = Input.Text;
-            if (UserModule.FindAndGiveRegexCommand(query)) {
-                _cmdInstance.Hide();
-            }
+            _cmdInstance.Hide();
+
+            Task.Factory.StartNew(() => {
+
+                UserModule um = null;
+                Command cm = null;
+                
+                if (UserModule.FindResponsibleUserModule(query, out um, out cm)) {
+
+                    Dispatcher.Invoke(() => {
+                        um.GiveRegexCommand(cm);
+                    });
+
+                }
+
+            });
+
         }
         
         // When window is shown, put focus on the command text

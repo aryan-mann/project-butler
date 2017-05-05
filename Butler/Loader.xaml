@@ -4,15 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Loader" Height="97.787" Width="481.69" WindowStyle="None" WindowStartupLocation="CenterScreen">
+        Title="Loader" Height="100" Width="482" WindowStyle="None" WindowStartupLocation="CenterScreen">
     <Grid Background="#FF424242">
-        <ProgressBar x:Name="Progress" Height="40" Margin="10,0,10,10" VerticalAlignment="Bottom" VerticalContentAlignment="Center">
-            <ProgressBar.Style>
-                <Style>
-                    
-                </Style>
-            </ProgressBar.Style>
-        </ProgressBar>
+        <ProgressBar x:Name="Progress" Height="40" Margin="10,0,10,10" VerticalAlignment="Bottom" VerticalContentAlignment="Center" Background="{DynamicResource Background}" Foreground="{DynamicResource Foreground}" BorderBrush="{x:Null}" />
         <TextBlock x:Name="Status" HorizontalAlignment="Stretch" TextTrimming="None" Margin="10,10,10,0" TextWrapping="NoWrap" Text="Checking if another instance is running" VerticalAlignment="Top" Height="21" Foreground="White" FontWeight="Bold" FontSize="16"/>
     </Grid>
 </Window>

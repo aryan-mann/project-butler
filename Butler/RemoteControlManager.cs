@@ -23,7 +23,14 @@ namespace Butler {
         private static TcpClient _client;
 
         public delegate void OnCommandRecieved(string command, TcpClient client);
-        public static event OnCommandRecieved CommandRecieved;  
+        public static event OnCommandRecieved CommandRecieved;
+
+        public delegate void OnClientConnected(TcpClient client);
+        public static event OnClientConnected ClientConnected;
+
+        public delegate void OnClientDisconnected(TcpClient client);
+        public static event OnClientDisconnected ClientDisconnected;
+
 
         static RemoteControlManager() {
             try {
@@ -50,7 +57,6 @@ namespace Butler {
 
             while (ServerRunning) {
                 _client = _listener.AcceptTcpClient();
-
                 Task.Factory.StartNew(() => HandleClient(_client));
             }
         }
@@ -58,8 +64,8 @@ namespace Butler {
         static void HandleClient(TcpClient client) {
             TcpClient tcpClient = client;
             NetworkStream stream = tcpClient.GetStream();
-
-            System.Diagnostics.Debug.WriteLine("A new client has connected with IP: " + tcpClient.Client.RemoteEndPoint);
+            
+            ClientConnected?.Invoke(client);
 
             byte[] message = new byte[4096];
 
@@ -72,10 +78,11 @@ namespace Butler {
 
                 // Client disconnected
                 if (bytesRead == 0 || !ServerRunning) {
+                    ClientDisconnected?.Invoke(client);
                     break;
                 }
 
-                string fullMessage = new ASCIIEncoding().GetString(message, 0, bytesRead).Replace("\r", "");
+                string fullMessage = new ASCIIEncoding().GetString(message, 0, bytesRead).Replace("\r", "").Replace("\n", "");
                 InvokeOnCommandRecieved(fullMessage, tcpClient);
             }
         }
