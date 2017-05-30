@@ -7,6 +7,7 @@ namespace ModuleAPI {
 
     public class Command {
 
+        public string UserModuleName { get; }
         /// <summary>
         /// The regular expression that matched with the user input
         /// </summary>
@@ -23,7 +24,11 @@ namespace ModuleAPI {
         public TcpClient Client { get; }
         public bool IsLocalCommand => Client == null;
 
-        public Command(Regex commandMatcher, string userInput, string localCommand, TcpClient client = null) {
+        public delegate void OnResponded(string response, Command com, TcpClient client);
+        public static OnResponded Responded { get; set; }
+
+        public Command(string userModuleName, Regex commandMatcher, string userInput, string localCommand, TcpClient client = null) {
+            UserModuleName = userModuleName;
             UserInput = userInput;
             CommandMatcher = commandMatcher;
             LocalCommand = localCommand;
@@ -36,9 +41,12 @@ namespace ModuleAPI {
         public GroupCollection Matches => CommandMatcher.Match(UserInput).Groups;
 
         public void Respond(string text) {
-            if (string.IsNullOrWhiteSpace(text) || IsLocalCommand) { return; }
+            if (string.IsNullOrWhiteSpace(text)) { return; }
 
-            if(IsLocalCommand) { return; }
+            if (IsLocalCommand) {
+                Responded?.Invoke(text, this, null);
+                return;
+            }
 
             if (!Client.Connected) {
                 Client.Connect((IPEndPoint) Client.Client.RemoteEndPoint);
@@ -46,6 +54,7 @@ namespace ModuleAPI {
             
             byte[] message = Encoding.UTF8.GetBytes($"\n{text}\n");
             Client.GetStream().Write(message, 0, message.Length);
+            Responded?.Invoke(text, this, Client);
         }
     }
 

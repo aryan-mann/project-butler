@@ -6,41 +6,47 @@
         xmlns:butler="clr-namespace:Butler"
         mc:Ignorable="d"
         Title="Main" Height="600" Width="900" Icon="pack://siteoforigin:,,,/Resources/butlerlogo2.png" MinHeight="300" MinWidth="600">
-    <Grid Background="{StaticResource Background}">
-        <ListBox x:Name="LoadedModules" Style="{StaticResource Default_ListBox}" HorizontalAlignment="Left" >
-
+    <Grid Style="{StaticResource DefaultGrid}">
+        <ListBox Style="{StaticResource DefaultListBox}" x:Name="LoadedModules" HorizontalAlignment="Left" Width="200" >
+            <ListBox.Resources>
+                <Style BasedOn="{StaticResource DefaultListBoxItem}" TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                </Style>
+            </ListBox.Resources>
+            <ListBoxItem Content="BOMB THEM"/>
         </ListBox>
-        <Grid Background="{StaticResource BackgroundAccent}" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="90">
-            <StackPanel Style="{StaticResource Purple_StackPanel}" x:Name="SideMenu">
-                <Button x:Name="RemoteButton" Content="{x:Static butler:RemoteControlManager.PortText}" Background="{StaticResource Off}" Click="RemoteButton_Click" Style="{StaticResource White_Button}" Height="131" RenderTransformOrigin="0.5,0.5" Margin="0" HorizontalAlignment="Center" Width="80" />
-                <Button Style="{StaticResource DefaultSquareButton}" Content="About" Click="AboutButton_Click" />
+        <Grid Style="{StaticResource DefaultGrid}" Margin="0,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="66">
+            <StackPanel x:Name="SideMenu">
+                <Button x:Name="RemoteButton" Style="{StaticResource DefaultButton}" Background="{x:Static butler:RemoteControlManager.ServerStatusColor}" 
+                        Content="{x:Static butler:RemoteControlManager.ServerRunningStatus}" Click="RemoteButton_Click" Height="60" Margin="0" Width="Auto" />
+                <Button Style="{StaticResource DefaultButton}" Content="About" Click="AboutButton_Click" />
             </StackPanel>
         </Grid>
-        <Grid Margin="200,0,90,0">
-            <Label x:Name="UmName" Content="Module Name" Style="{StaticResource CenteredLabel}" />
-            <ListBox x:Name="UmCommands" Background="{StaticResource HalfAccent}" Style="{StaticResource Default_ListBox}" Margin="0,237,0,30" MinHeight="20">
+        <Grid Style="{StaticResource DefaultGrid}" Margin="200,0,90,0">
+            <Label Style="{StaticResource DefaultLabel}" FontSize="32" VerticalAlignment="Top" x:Name="UmName" Content="Module Name" Height="63" />
+            <ListBox Style="{StaticResource DefaultListBox}" x:Name="UmCommands" Margin="0,237,0,30" MinHeight="20">
+                <ListBox.Resources>
+                    <Style BasedOn="{StaticResource DefaultListBoxItem}" TargetType="ListBoxItem" />
+                </ListBox.Resources>
             </ListBox>
-            <Label Content="Hey! I'm finished loading." x:Name="StatusMessage" Margin="0" VerticalAlignment="Bottom" Height="29" Background="{StaticResource Background}" Foreground="White" VerticalContentAlignment="Center"/>
-            <Grid Background="{StaticResource PrimaryAccent}" Height="169" Margin="0,68,0,0" VerticalAlignment="Top">
+            <Label Content="Hey! I'm finished loading." x:Name="StatusMessage" Margin="0" VerticalAlignment="Bottom" Height="29" Foreground="White" VerticalContentAlignment="Center"/>
+            <Grid Height="170" Background="{StaticResource ZinnwalditeBrown}" Margin="0,70,0,0" VerticalAlignment="Top">
                 <Grid.Resources>
-                    <Style TargetType="Label">
-                        <Setter Property="Background" Value="{StaticResource PrimaryAccent}" />
-                        <Setter Property="Foreground" Value="White" />
-                        <Setter Property="BorderThickness" Value="0" />
-                    </Style>
+                    <Style BasedOn="{StaticResource DefaultLabel}" TargetType="Label"/>
                 </Grid.Resources>
-                <Label Content="Version: " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="64"/>
-                <Label Content="Author: " HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="64"/>
-                <Label Content="Website: " HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="64"/>
-                <Label Content="Directory: " HorizontalAlignment="Left" Margin="10,102,0,0" VerticalAlignment="Top"/>
-                <Label Content="Prefix:" HorizontalAlignment="Left" Margin="10,135,0,0" VerticalAlignment="Top" Width="64"/>
-                <Label x:Name="UmVersion" Content="" Margin="79,10,153,0" VerticalAlignment="Top"/>
-                <Label x:Name="UmAuthor" Content="" Margin="79,41,153,0" VerticalAlignment="Top"/>
-                <Label x:Name="UmWebsite" Content="" Margin="79,72,153,0" VerticalAlignment="Top"/>
-                <Label x:Name="UmDirectory" Content="" Margin="79,102,153,0" VerticalAlignment="Top"/>
-                <Label x:Name="UmCommandCount" Content="0" HorizontalAlignment="Right" Margin="0,10,10,10" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="82" Height="118" Background="{StaticResource PrimaryAccent}" Foreground="White" FontWeight="Bold" Width="138"/>
-                <Label x:Name="UmTrigger" Content="" Margin="79,135,153,0" VerticalAlignment="Top"/>
+                <Label Content="Version" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="64" />
+                <Label Content="Author" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="64" />
+                <Label Content="Website" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="64" />
+                <Label Content="Directory" HorizontalAlignment="Left" Margin="10,102,0,0" VerticalAlignment="Top" Width="64"/>
+                <Label Content="Prefix" HorizontalAlignment="Left" Margin="10,135,0,0" VerticalAlignment="Top" Width="64" />
+                <Label x:Name="UmVersion" Content="" Margin="79,10,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left"/>
+                <Label x:Name="UmAuthor" Content="" Margin="79,41,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left"/>
+                <Label x:Name="UmWebsite" Content="" Margin="79,72,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left"/>
+                <Label x:Name="UmDirectory" Content="" Margin="79,102,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left"/>
+                <Label x:Name="UmTrigger" Content="" Margin="79,135,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left"/>
+                <Label x:Name="UmCommandCount" Content="0" HorizontalAlignment="Right" Margin="0,10,10,10" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="82" Background="{StaticResource MyrtleGreen}" Foreground="White" FontWeight="Bold" Width="138"/>
             </Grid>
         </Grid>
     </Grid>
 </Window>
+

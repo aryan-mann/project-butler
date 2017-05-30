@@ -3,13 +3,15 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace Butler {
 
     public static class RemoteControlManager {
 
         public static bool ServerRunning { get; private set; }
-        public static string ServerRunningStatus => ServerRunning ? "On" : "Off";
+        public static string ServerRunningStatus => $"{(ServerRunning ? "On" : "Off")} [{Port}]";
+        public static SolidColorBrush ServerStatusColor => ServerRunning ? Brushes.SeaGreen : Brushes.Maroon; 
 
         private static int _port = 4144;
         public static int Port {
@@ -31,7 +33,6 @@ namespace Butler {
         public delegate void OnClientDisconnected(TcpClient client);
         public static event OnClientDisconnected ClientDisconnected;
 
-
         static RemoteControlManager() {
             try {
                 _listener = new TcpListener(IPAddress.Any, 4144);
@@ -47,11 +48,9 @@ namespace Butler {
             ServerRunning = true;
             Task.Factory.StartNew(CoreLoop);
         }
-
         public static void StopServer() {
             ServerRunning = false;
         }
-        
         static void CoreLoop() {
             _listener.Start();
 
@@ -89,6 +88,12 @@ namespace Butler {
 
         // Invoke safely
         static void InvokeOnCommandRecieved(string command, TcpClient requester) => CommandRecieved?.Invoke(command, requester);
+        /// <summary>
+        /// Create a false command from a remote client
+        /// </summary>
+        /// <param name="command">User input</param>
+        /// <param name="requester">Remote client</param>
+        public static void InvokeOnPseudoCommandRecieved(string command, TcpClient requester) => InvokeOnCommandRecieved(command, requester);
     }
 
 }

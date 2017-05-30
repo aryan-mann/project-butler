@@ -6,6 +6,7 @@ using static System.Reflection.Assembly;
 
 namespace Butler
 {
+
     /// <summary>
     /// Interaction logic for Loader.xaml
     /// </summary>
@@ -31,13 +32,13 @@ namespace Butler
             ModuleLoader.LoadingStarted += count => {
                 pointPerModule = 90f/count;
                 Dispatcher.Invoke(() => {
-                    Status.Text = "Loading modules";
+                    Status.Content = "Loading modules";
                 });
             };
 
             ModuleLoader.ModuleLoaded += module => {
                 Dispatcher.Invoke(() => {
-                    Status.Text = module.Name + " loaded";
+                    Status.Content = module.Name + " loaded";
                     Progress.Value += pointPerModule;
                 });
             };
@@ -45,7 +46,7 @@ namespace Butler
             ModuleLoader.LoadingEnded += () => {
                 Dispatcher.Invoke(() => {
                     Progress.Value = 100;
-                    Status.Text = "Loaded all modules";
+                    Status.Content = "Loaded all modules";
                     new MainWindow().Show();
                     Close();
                 });

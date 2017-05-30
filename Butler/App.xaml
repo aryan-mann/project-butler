@@ -4,55 +4,39 @@
              StartupUri="Loader.xaml">
     <Application.Resources>
 
-        <SolidColorBrush x:Key="Background" Color="#2B2B2B" />
-        <SolidColorBrush x:Key="BackgroundAccent" Color="#4C4C4C" />
-        <SolidColorBrush x:Key="Foreground" Color="#FFFFFF" />
-        <SolidColorBrush x:Key="HalfAccent" Color="#585858" />
-        <SolidColorBrush x:Key="PrimaryAccent" Color="#282828" />
-
+        <!-- DEFAULT COMPONENT COLORS -->
+        <SolidColorBrush x:Key="Charcoal" Color="#2C4359"/>
+        <SolidColorBrush x:Key="GunMetal" Color="#2C293A"/>
+        <SolidColorBrush x:Key="LightGray" Color="#CDD8D7"/>
+        <SolidColorBrush x:Key="ZinnwalditeBrown" Color="#2C190C"/>
+        <SolidColorBrush x:Key="MyrtleGreen" Color="#2C6275"/>
+        
         <SolidColorBrush x:Key="Off" Color="#E63F1F" />
         <SolidColorBrush x:Key="On" Color="#70E61F" />
-
-        <!-- STACK PANEL -->
-        <Style TargetType="StackPanel" x:Key="Purple_StackPanel">
-            <Setter Property="Background" Value="{StaticResource BackgroundAccent}" />
-            <Setter Property="Orientation" Value="Vertical" />
-            <Setter Property="Margin" Value="5" />
-        </Style>
-
-        <Style TargetType="Label" x:Key="CenteredLabel">
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="32" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Margin" Value="10,10,10,0" />
+        
+        <!-- GRID -->
+        <Style TargetType="Grid" x:Key="DefaultGrid">
+            <Setter Property="Background" Value="{StaticResource GunMetal}"/>
         </Style>
 
         <!-- BUTTON -->
-        <Style TargetType="Button" x:Key="DefaultSquareButton">
-            <Setter Property="Background" Value="{StaticResource PrimaryAccent}" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="FontSize" Value="24" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="Height" Value="70" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="FontWeight" Value="Bold" />
+        <Style TargetType="Button" x:Key="DefaultButton">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Background" Value="{StaticResource ZinnwalditeBrown}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid Margin="{TemplateBinding Margin}" x:Name="BackGrid" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Background="{TemplateBinding Background}">
-                            <TextBlock x:Name="BackText" TextWrapping="Wrap"  Text="{TemplateBinding Content}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="{TemplateBinding FontSize}" Typography.Capitals="AllSmallCaps" />
+                            <TextBlock x:Name="BackText" Padding="10" Foreground="White" TextWrapping="Wrap"  Text="{TemplateBinding Content}" TextAlignment="Center" VerticalAlignment="Center" 
+                                       HorizontalAlignment="Center" FontSize="{TemplateBinding FontSize}" Typography.Capitals="AllSmallCaps" />
                         </Grid>
                         
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{StaticResource HalfAccent}" TargetName="BackGrid" />
+                                <Setter Property="Background" Value="CadetBlue" TargetName="BackGrid" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="{StaticResource PrimaryAccent}" TargetName="BackGrid" />
+                                <Setter Property="Background" Value="Red" TargetName="BackGrid" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -60,18 +44,26 @@
             </Setter>
         </Style>
 
-        <Style TargetType="Button" BasedOn="{StaticResource DefaultSquareButton}" x:Key="White_Button">
-            <Setter Property="Background" Value="White" />
+        <!-- TOGGLE BUTTON -->
+        <Style TargetType="Button" x:Key="ToggleButton">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Background" Value="{StaticResource Off}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid Margin="{TemplateBinding Margin}" x:Name="BackGrid" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Background="{TemplateBinding Background}">
-                            <TextBlock TextWrapping="Wrap"  Text="{TemplateBinding Content}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="{TemplateBinding FontSize}" Typography.Capitals="AllSmallCaps" />
+                            <TextBlock x:Name="ButtonText" TextWrapping="Wrap" Text="{TemplateBinding Content}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="{TemplateBinding FontSize}" Typography.Capitals="AllSmallCaps" />
                         </Grid>
 
                         <ControlTemplate.Triggers>
+                            <Trigger Property="ToggleButton.IsChecked" Value="True" SourceName="ButtonText">
+                                <Setter Property="Background" Value="{StaticResource On}" TargetName="BackGrid"/>
+                            </Trigger>
+                            <Trigger Property="ToggleButton.IsChecked" Value="False" SourceName="ButtonText">
+                                <Setter Property="Background" Value="{StaticResource Off}" TargetName="BackGrid"/>
+                            </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#E9E9E9" TargetName="BackGrid" />
+                                <Setter Property="Background" Value="Maroon" TargetName="BackGrid" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter Property="Background" Value="#9C9C9C" TargetName="BackGrid" />
@@ -82,25 +74,31 @@
             </Setter>
         </Style>
         
-        <!-- LIST BOX ITEM -->
-        <Style TargetType="ListBoxItem" x:Key="Purple_ListBoxItem">
-            <Setter Property="Foreground" Value="{StaticResource Foreground}" />
-            <Setter Property="Cursor" Value="Hand" />   
+        <!-- LISTBOX -->
+        <Style TargetType="ListBox" x:Key="DefaultListBox">
+            <Setter Property="Background" Value="{StaticResource Charcoal}"/>
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+
+        <!-- LISTBOX ITEM -->
+        <Style TargetType="ListBoxItem" x:Key="DefaultListBoxItem">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
-                        <Grid x:Name="ItemGrid"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                            <ContentPresenter x:Name="ItemContent" Margin="5" />
+                        <Grid x:Name="ItemGrid" Background="{TemplateBinding Background}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <ContentPresenter x:Name="ItemContent" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Content="{TemplateBinding Content}" Margin="5" />
                         </Grid>
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="TextBlock.Foreground" Value="{StaticResource Foreground}" TargetName="ItemContent" />
-                                <Setter Property="Background" Value="{StaticResource PrimaryAccent}" TargetName="ItemGrid" />
+                                <Setter Property="TextBlock.Foreground" Value="White" TargetName="ItemContent" />
+                                <Setter Property="Background" Value="{StaticResource ZinnwalditeBrown}" TargetName="ItemGrid" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="TextBlock.Foreground" Value="{StaticResource Foreground}" TargetName="ItemContent" />
-                                <Setter Property="Background" Value="{StaticResource PrimaryAccent}" TargetName="ItemGrid" />
+                                <Setter Property="TextBlock.Foreground" Value="White" TargetName="ItemContent" />
+                                <Setter Property="Background" Value="{StaticResource ZinnwalditeBrown}" TargetName="ItemGrid" />
                                 <Setter Property="TextBlock.FontWeight" Value="Bold" TargetName="ItemContent"/>
                                 <Setter Property="TextBlock.FontSize" Value="24" TargetName="ItemContent"/>
                             </Trigger>
@@ -110,18 +108,12 @@
             </Setter>
         </Style>
         
-        <!-- LIST BOX -->
-        <Style TargetType="ListBox" x:Key="Default_ListBox">
-            <Setter Property="Background" Value="{StaticResource BackgroundAccent}" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Foreground" Value="{StaticResource Foreground}" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="SelectionMode" Value="Single" />
-            <Setter Property="MinWidth" Value="200" />
-            <Setter Property="Width" Value="Auto" />
-            <Setter Property="ItemContainerStyle" Value="{StaticResource Purple_ListBoxItem}" />
+        <!-- LABEL -->
+        <Style TargetType="Label"  x:Key="DefaultLabel">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
-        
 
     </Application.Resources>
 </Application>

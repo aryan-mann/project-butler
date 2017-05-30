@@ -9,7 +9,7 @@ using System.Windows.Threading;
 using ModuleAPI;
 
 namespace Butler {
-
+    
     public class UserModule {
 
         /* Instance Management */
@@ -172,6 +172,10 @@ namespace Butler {
                         break;
                     }
                 }
+
+                int t = 0;
+
+                t += 4;
             }
 
             //If a match is not found or the user input is invalid, select all user input text
@@ -179,7 +183,7 @@ namespace Butler {
                 return false;
             }
 
-            command = new Command(shortListModule.RegisteredCommands[selectedRegexKey], rest, selectedRegexKey, client);
+            command = new Command(shortListModule.Prefix, shortListModule.RegisteredCommands[selectedRegexKey], rest, selectedRegexKey, client);
 
             return true;
         }

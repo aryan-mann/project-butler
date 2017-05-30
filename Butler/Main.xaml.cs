@@ -61,7 +61,7 @@ namespace Butler {
 
                     if(UserModule.FindResponsibleUserModule(command, out mod, out cm, tcpClient)) {
                         Dispatcher.Invoke(() => {
-                            StatusMessage.Content = $"{tcpClient.Client.RemoteEndPoint} > [{mod.Name}] {cm.LocalCommand}";
+                            StatusMessage.Content = $"{(tcpClient != null ? tcpClient.Client.RemoteEndPoint + " > " : "")} [{mod.Name}:{mod.Prefix}] > {cm.LocalCommand}";
                             mod.GiveRegexCommand(cm);
                         });
                     }
@@ -79,8 +79,14 @@ namespace Butler {
                     StatusMessage.Content = $"({client.Client.RemoteEndPoint}) has now disconnected.";
                 });
             };
-        }
 
+            Command.Responded += (response, com, client) => {
+                Dispatcher.Invoke(() => {
+                    StatusMessage.Content = $"[{com.UserModuleName}:{com.LocalCommand}] > {response}";
+                });
+            };
+        }
+        
         // New item from Loaded Modules selected
         private void LoadedModulesOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs) {
             ListBoxItem item = (ListBoxItem) LoadedModules.SelectedItem;
@@ -116,8 +122,6 @@ namespace Butler {
             //Load all modules on application start
             //ModuleLoader.LoadAll();
             SyncModules();
-
-
         }
 
         // Syncs ModuleLoader.ModuleLoadOrder and LoadedModules.Items
@@ -144,7 +148,7 @@ namespace Butler {
                 RemoteControlManager.StopServer();
             }
 
-            StatusMessage.Content = $"The server is now {(RemoteControlManager.ServerRunning ? "" : "not")} running.";
+            StatusMessage.Content = $"The server is now{(RemoteControlManager.ServerRunning ? "" : " not")} running.";
         }
         /* Right Menu Button Events (END) */
 
@@ -180,7 +184,6 @@ namespace Butler {
             StateChanged += MainWindow_StateChanged;
         }
 
-
         // Hide/Show in taskbar depending on window visibility
         private void MainWindow_StateChanged(object sender, EventArgs e) {
             switch(WindowState) {
@@ -195,7 +198,6 @@ namespace Butler {
                     break;
             }
         }
-
-
+        
     }
 }
