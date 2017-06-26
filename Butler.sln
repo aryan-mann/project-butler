@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26127.3
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Butler", "Butler\Butler.csproj", "{D9F73BAE-D3EA-41DB-9782-660FF683D76B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModuleAPI", "ModuleAPI\ModuleAPI.csproj", "{42E64288-5121-47C2-93FB-48E0D17C6AAA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Browser", "Browser\Browser.csproj", "{BB61CE98-C33F-4B1B-B5C1-918746676C6C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ButlerTests", "ButlerTests\ButlerTests.csproj", "{386785C8-A3EA-4018-966E-461167166B3C}"
 EndProject
@@ -25,10 +23,6 @@ Global
 		{42E64288-5121-47C2-93FB-48E0D17C6AAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42E64288-5121-47C2-93FB-48E0D17C6AAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42E64288-5121-47C2-93FB-48E0D17C6AAA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BB61CE98-C33F-4B1B-B5C1-918746676C6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BB61CE98-C33F-4B1B-B5C1-918746676C6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BB61CE98-C33F-4B1B-B5C1-918746676C6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BB61CE98-C33F-4B1B-B5C1-918746676C6C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{386785C8-A3EA-4018-966E-461167166B3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{386785C8-A3EA-4018-966E-461167166B3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{386785C8-A3EA-4018-966E-461167166B3C}.Release|Any CPU.ActiveCfg = Release|Any CPU

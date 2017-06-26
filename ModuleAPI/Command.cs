@@ -39,7 +39,7 @@ namespace ModuleAPI {
         /// A collection of named capturing groups
         /// </summary>
         public GroupCollection Matches => CommandMatcher.Match(UserInput).Groups;
-
+        
         public void Respond(string text) {
             if (string.IsNullOrWhiteSpace(text)) { return; }
 

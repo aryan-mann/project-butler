@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace ModuleAPI
 {
@@ -22,7 +24,7 @@ namespace ModuleAPI
 
         // (**).CodeBase returns the location of the class library (.dll)
         // Thus, by getting it's directory, we can get BaseDirectory of the module
-        public string BaseDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetAssembly(GetType()).CodeBase.Substring(8));
+        public string ModuleDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetAssembly(GetType()).CodeBase.Substring(8));
 
         // TURN THIS INTO AN ORDERED DICTIONARY GOD DAMN IT
         public abstract Dictionary<string, Regex> RegisteredCommands { get; }
@@ -30,19 +32,29 @@ namespace ModuleAPI
         /// <summary>
         /// When the module is first loaded/ first given a command.
         /// </summary>
-        public abstract void OnInitialized();
+        public abstract Task OnInitialized();
 
         /// <summary>
         /// When a user input matches the Regex(s) provided by our module
         /// </summary>
         /// <param name="command">The command recieved</param>
-        public abstract void OnCommandRecieved(Command command);
+        public abstract Task OnCommandRecieved(Command command);
 
         /// <summary>
         /// Opens the settings panel for the Module
         /// </summary>
-        public abstract void ConfigureSettings();
+        public abstract Task ConfigureSettings();
 
-        public abstract void OnShutdown();
+        /// <summary>
+        /// When the main application is shutting down
+        /// </summary>
+        /// <returns></returns>
+        public abstract Task OnShutdown();
     }
+
+    public static class ModuleExtensions {
+        public static string GetBaseDirectoryOfType(Type t) => Path.GetDirectoryName(System.Reflection.Assembly.GetAssembly(t).CodeBase.Substring(8));
+        public static string GetBaseDirectory(this Module m) => Path.GetDirectoryName(System.Reflection.Assembly.GetAssembly(m.GetType()).CodeBase.Substring(8));
+    }
+
 }

@@ -104,11 +104,12 @@ namespace Butler {
             }
         }
 
-        public static void SetVisible(bool b) { Instance.Visible = b; }
+        public static void SetVisible(bool b) { if(Instance != null) Instance.Visible = b; }
 
         //Hide on startup
         static TaskbarIconManager() {
             SetVisible(false);
+            Application.ApplicationExit += (sender, args) => { Dispose(); };
         }
 
         //Delete icon from taskbar

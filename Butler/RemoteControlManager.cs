@@ -1,66 +1,71 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using Butler.Annotations;
 
 namespace Butler {
 
-    public static class RemoteControlManager {
+    public class RemoteControlManager: INotifyPropertyChanged {
 
-        public static bool ServerRunning { get; private set; }
-        public static string ServerRunningStatus => $"{(ServerRunning ? "On" : "Off")} [{Port}]";
-        public static SolidColorBrush ServerStatusColor => ServerRunning ? Brushes.SeaGreen : Brushes.Maroon; 
-
-        private static int _port = 4144;
-        public static int Port {
-            get { return _port; }
-            set { _port = _port > 65535 || _port < 1024 ? 4144 : value; }
+        private RemoteControlManager() {
+            _listener = new TcpListener(IPAddress.Any, Port);
         }
-        public static string PortText => Port.ToString();
+        private static RemoteControlManager _instance;
+        public static RemoteControlManager Instance => (_instance = _instance ?? new RemoteControlManager());
+
+        private bool _serverRunning = false;
+        public bool ServerRunning {
+            get { return _serverRunning; }
+            private set { _serverRunning = value; OnPropertyChanged(); OnPropertyChanged(nameof(ServerRunningStatus)); OnPropertyChanged(nameof(ServerStatusColor)); }
+        }
+
+        public string ServerRunningStatus => $"{(ServerRunning ? "Stop" : "Start")}";
+        public SolidColorBrush ServerStatusColor => ServerRunning ? Brushes.SeaGreen : Brushes.Maroon; 
+
+        private int _port = 4144;
+        public int Port {
+            get { return _port; }
+            set { _port = _port > 65535 || _port < 1024 ? 4144 : value; OnPropertyChanged(); OnPropertyChanged(nameof(PortText)); }
+        }
+        public string PortText => Port.ToString();
 
         // Server stuff
-        private static TcpListener _listener;
-        private static TcpClient _client;
+        private TcpListener _listener;
+        private TcpClient _client;
 
         public delegate void OnCommandRecieved(string command, TcpClient client);
-        public static event OnCommandRecieved CommandRecieved;
+        public event OnCommandRecieved CommandRecieved;
 
         public delegate void OnClientConnected(TcpClient client);
-        public static event OnClientConnected ClientConnected;
+        public event OnClientConnected ClientConnected;
 
         public delegate void OnClientDisconnected(TcpClient client);
-        public static event OnClientDisconnected ClientDisconnected;
-
-        static RemoteControlManager() {
-            try {
-                _listener = new TcpListener(IPAddress.Any, 4144);
-            }
-            catch (Exception e) {
-                Console.WriteLine(e);
-            }
-        }
-
-        public static void StartServer() {
+        public event OnClientDisconnected ClientDisconnected;
+        
+        public void StartServer() {
             if(ServerRunning) { return; }
 
             ServerRunning = true;
             Task.Factory.StartNew(CoreLoop);
         }
-        public static void StopServer() {
+        public void StopServer() {
             ServerRunning = false;
         }
-        static void CoreLoop() {
+        async Task CoreLoop() {
             _listener.Start();
 
             while (ServerRunning) {
-                _client = _listener.AcceptTcpClient();
-                Task.Factory.StartNew(() => HandleClient(_client));
+                _client = await _listener.AcceptTcpClientAsync();
+                await Task.Factory.StartNew(() => HandleClient(_client));
             }
         }
         
-        static void HandleClient(TcpClient client) {
+        void HandleClient(TcpClient client) {
             TcpClient tcpClient = client;
             NetworkStream stream = tcpClient.GetStream();
             
@@ -87,13 +92,19 @@ namespace Butler {
         }
 
         // Invoke safely
-        static void InvokeOnCommandRecieved(string command, TcpClient requester) => CommandRecieved?.Invoke(command, requester);
+        void InvokeOnCommandRecieved(string command, TcpClient requester) => CommandRecieved?.Invoke(command, requester);
         /// <summary>
         /// Create a false command from a remote client
         /// </summary>
         /// <param name="command">User input</param>
         /// <param name="requester">Remote client</param>
-        public static void InvokeOnPseudoCommandRecieved(string command, TcpClient requester) => InvokeOnCommandRecieved(command, requester);
+        public void InvokeOnPseudoCommandRecieved(string command, TcpClient requester) => InvokeOnCommandRecieved(command, requester);
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
 }

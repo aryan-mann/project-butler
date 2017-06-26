@@ -4,6 +4,7 @@ using System.Linq;
 using System.Media;
 using System.Security.RightsManagement;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web;
 using System.Windows;
 using ModuleAPI;
@@ -49,10 +50,10 @@ namespace Browser {
         public Dictionary<string, string> UrlConstructorDictionary => new Dictionary<string, string> {
             ["stack overflow"] = @"stackoverflow.com/search?q={0}",
             ["youtube"] = @"youtube.com/results?search_query={0}",
-            ["wikipedia"] = @"https://en.wikipedia.org/w/index.php?search={0]"
+            ["wikipedia"] = @"https://en.wikipedia.org/w/index.php?search={0}"
         };
 
-        public override void OnCommandRecieved(Command cmd) {
+        public override async Task OnCommandRecieved(Command cmd) {
             
             if(cmd.LocalCommand == "search") {
                 Match m = RegisteredCommands[cmd.LocalCommand].Match(cmd.UserInput);
@@ -84,9 +85,10 @@ namespace Browser {
         }
         
         #region Unimplemented Methods
-        public override void ConfigureSettings() { }
-        public override void OnInitialized() { }
-        public override void OnShutdown() { }
+        public override async Task ConfigureSettings() => await Task.CompletedTask;
+        public override async Task OnInitialized() => await Task.CompletedTask;
+        public override async Task OnShutdown() => await Task.CompletedTask;
+
         #endregion
     }
 }

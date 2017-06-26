@@ -25,49 +25,51 @@ namespace Butler {
             ["Test"] = new Regex(@"Test", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace)
         };
 
-        public override void OnCommandRecieved(Command command) {
+        public override async Task OnCommandRecieved(Command command) {
 
-            if(command.LocalCommand == "Command API") {
-                if(!command.IsLocalCommand) {
-                    List<ModuleInfoPacket> packetList = new List<ModuleInfoPacket>();
-                    foreach (var userModule in ModuleLoader.ModuleLoadOrder) {
-                        packetList.Add(ModuleInfoPacket.FromUserModule(userModule.Value));
+            switch (command.LocalCommand) {
+                case "Command API":
+                    if(!command.IsLocalCommand) {
+                        List<ModuleInfoPacket> packetList = new List<ModuleInfoPacket>();
+
+                        await Task.Run(() => {
+                            foreach (var userModule in ModuleLoader.ModuleLoadOrder) {
+                                packetList.Add(ModuleInfoPacket.FromUserModule(userModule.Value));
+                            }
+                        });
+
+                        command.Respond(JsonConvert.SerializeObject(packetList)); 
                     }
 
-                    command.Respond(JsonConvert.SerializeObject(packetList)); 
-                }
+                    return;
+                case "Command List":
+                    List<UserModule> uModules = ModuleLoader.ModuleLoadOrder.Values.ToList();
+                    string output = $"{uModules.Count} Available Commands:- \n\n";
 
-                return;
-            }
+                    await Task.Run(() => {
+                        foreach (var mod in uModules) {
+                            output += $"> {mod.Name} ({mod.Prefix}) [{mod.RegisteredCommands.Count}]\n\n";
+                            foreach (var regexes in mod.RegisteredCommands) {
+                                output += $"   > {regexes.Key} => {regexes.Value.ToString()}\n";
+                            }
+                            output += $"\n";
+                        }
+                    });
 
-            if(command.LocalCommand == "Command List") {
-                List<UserModule> uModules = ModuleLoader.ModuleLoadOrder.Values.ToList();
-                string output = $"{uModules.Count} Available Commands:- \n\n";
-
-                foreach (var mod in uModules) {
-                    output += $"> {mod.Name} ({mod.Prefix}) [{mod.RegisteredCommands.Count}]\n\n";
-                    foreach (var regexes in mod.RegisteredCommands) {
-                        output += $"   > {regexes.Key} => {regexes.Value.ToString()}\n";
+                    if(!command.IsLocalCommand) {
+                        command.Respond(output);
                     }
-                    output += $"\n";
-                }
 
-                if(!command.IsLocalCommand) {
-                    command.Respond(output);
-                }
-
-                return;
+                    return;
+                case "Test":
+                    RemoteControlManager.Instance.InvokeOnPseudoCommandRecieved("music start radio", null);
+                    break;
             }
-
-            if (command.LocalCommand == "Test") {
-                RemoteControlManager.InvokeOnPseudoCommandRecieved("music start radio", null);
-            }
-
         }
 
-        public override void OnInitialized() { }
-        public override void ConfigureSettings() { }
-        public override void OnShutdown() { }
+        public override async Task OnInitialized() => await Task.CompletedTask;
+        public override async Task ConfigureSettings() => await Task.CompletedTask;
+        public override async Task OnShutdown() => await Task.CompletedTask;
     }
 
     // Representation of all commands of all modules that external apps will recognize

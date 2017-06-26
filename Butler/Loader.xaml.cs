@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
+using Butler.Annotations;
 using static System.Diagnostics.Process;
 using static System.IO.Path;
 using static System.Reflection.Assembly;
@@ -10,18 +13,23 @@ namespace Butler
     /// <summary>
     /// Interaction logic for Loader.xaml
     /// </summary>
-    public partial class Loader : Window
+    public partial class Loader : Window, INotifyPropertyChanged
     {
         public Loader() {
             InitializeComponent();
-            Loaded += Loader_Loaded;
+            Loaded += Loader_LoadedAsync;
         }
 
-        private void Loader_Loaded(object sender, RoutedEventArgs e) {
+        private string _message = "Checking if another instance is running";
+        public string Message {
+            get { return _message + ".."; }
+            private set { _message = value; OnPropertyChanged(); }
+        }
 
+        private async void Loader_LoadedAsync(object sender, RoutedEventArgs e) {
             Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
 
-            if (GetProcessesByName(GetFileNameWithoutExtension(GetEntryAssembly().Location)).Length > 1) {
+            if(GetProcessesByName(GetFileNameWithoutExtension(GetEntryAssembly().Location)).Length > 1) {
                 MessageBox.Show("An instance of this application is already running.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
@@ -30,15 +38,15 @@ namespace Butler
 
             double pointPerModule = 0;
             ModuleLoader.LoadingStarted += count => {
-                pointPerModule = 90f/count;
+                pointPerModule = 90f / count;
                 Dispatcher.Invoke(() => {
-                    Status.Content = "Loading modules";
+                    Message = "Loading modules";
                 });
             };
 
             ModuleLoader.ModuleLoaded += module => {
                 Dispatcher.Invoke(() => {
-                    Status.Content = module.Name + " loaded";
+                    Message = module.Name + " loaded";
                     Progress.Value += pointPerModule;
                 });
             };
@@ -46,13 +54,20 @@ namespace Butler
             ModuleLoader.LoadingEnded += () => {
                 Dispatcher.Invoke(() => {
                     Progress.Value = 100;
-                    Status.Content = "Loaded all modules";
+                    Message = "Loaded all modules";
                     new MainWindow().Show();
                     Close();
                 });
             };
 
-            Task.Factory.StartNew(ModuleLoader.LoadAll);
+            await ModuleLoader.LoadAllAsync();
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

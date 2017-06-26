@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Loader" Height="100" Width="482" WindowStyle="None" WindowStartupLocation="CenterScreen" AllowsTransparency="True">
-    <Border BorderThickness="1" BorderBrush="{StaticResource LightGray}">
-        <Grid Background="{StaticResource GunMetal}">
-            <ProgressBar x:Name="Progress" Height="32" Margin="10,0,10,10" VerticalAlignment="Bottom" VerticalContentAlignment="Center" Background="{StaticResource Charcoal}" Foreground="{StaticResource MyrtleGreen}" BorderBrush="{x:Null}" />
-            <Label x:Name="Status" Content="Checking if another instance is running" Margin="10,10,10,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="35" Foreground="White" FontSize="18"/>
+    <Border BorderThickness="2" BorderBrush="{StaticResource BackgroundLevel3}">
+        <Grid Background="{StaticResource BackgroundLevel1}">
+            <Label x:Name="Status" Content="Checking if another instance is running" Margin="10,10,10,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" 
+                   VerticalContentAlignment="Center" Height="35" Foreground="{StaticResource SoftWhite}" FontSize="18"/>
+            <ProgressBar x:Name="Progress" Foreground="{DynamicResource Accent}" Height="32" Margin="10,0,10,10" VerticalAlignment="Bottom" VerticalContentAlignment="Center" BorderBrush="{x:Null}" />
         </Grid>
     </Border>
 </Window>

@@ -5,11 +5,12 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 using ModuleAPI;
 
 namespace Butler {
-    
+
     public class UserModule {
 
         /* Instance Management */
@@ -77,12 +78,12 @@ namespace Butler {
             }
         }
 
-        private string _baseDirectory;
-        public string BaseDirectory {
+        private string _moduleDirectory;
+        public string ModuleDirectory {
             get {
-                if(!string.IsNullOrWhiteSpace(_baseDirectory)) { return _baseDirectory; }
-                _baseDirectory = GetPropertyValue<string>("BaseDirectory");
-                return _baseDirectory;
+                if(!string.IsNullOrWhiteSpace(_moduleDirectory)) { return _moduleDirectory; }
+                _moduleDirectory = GetPropertyValue<string>("ModuleDirectory");
+                return _moduleDirectory;
             }
         }
 
@@ -100,19 +101,33 @@ namespace Butler {
         /// Invoke commands more easily by caching information on this method
         /// </summary>
         private readonly MethodInfo _onCommandRecievedMethod;
+        private readonly MethodInfo _onInitialized;
+        private readonly MethodInfo _configureSettings;
+        private readonly MethodInfo _onShutdown;
 
         private UserModule(Type t) {
             ModuleType = t;
+            _onInitialized = ModuleType.GetMethod("OnInitialized");
             _onCommandRecievedMethod = ModuleType.GetMethod("OnCommandRecieved");
+            _configureSettings = ModuleType.GetMethod("ConfigureSettings");
+            _onShutdown = ModuleType.GetMethod("OnShutdown");
+
+            GiveInitializedCommand();
         }
 
         //Indicate to the Module that a command has been received for it 
         public void GiveRegexCommand(Command cmd) {
             if(!RegisteredCommands.Keys.Contains(cmd.LocalCommand)) { return; }
-
-            _onCommandRecievedMethod.Invoke(Instance, new object[] {
-                cmd
-            });
+            Task.Run(() => _onCommandRecievedMethod.Invoke(Instance, new object[] { cmd }));
+        }
+        public void GiveInitializedCommand() {
+            Task.Run(() => _onInitialized.Invoke(Instance, new object[] { }));
+        }
+        public void GiveConfigureSettingsCommand() {
+            Task.Run(() => _configureSettings.Invoke(Instance, new object[] { }));
+        }
+        public void GiveOnShutdownCommand() {
+            Task.Run(() => _onShutdown.Invoke(Instance, new object[] { }));
         }
 
         // Get the value of a property of the ApplicationHook class of the modile
@@ -151,7 +166,7 @@ namespace Butler {
             if(string.IsNullOrWhiteSpace(query)) {
                 return false;
             }
-            
+
             string selectedRegexKey = "";
             bool matchFound = false;
 
@@ -172,10 +187,6 @@ namespace Butler {
                         break;
                     }
                 }
-
-                int t = 0;
-
-                t += 4;
             }
 
             //If a match is not found or the user input is invalid, select all user input text
@@ -197,10 +208,11 @@ namespace Butler {
             return new UserModule(t);
         }
         public static async Task<UserModule> FromTypeAsync(Type t) {
-            Task<UserModule> mod = new Task<UserModule>(() => FromType(t));
-            await mod;
+            return await Task.Run(() => FromType(t));
+        }
 
-            return mod.Result;
+        public override string ToString() {
+            return $"{Name}";
         }
     }
 

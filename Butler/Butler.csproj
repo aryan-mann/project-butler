@@ -80,9 +80,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BindingConverters.cs" />
     <Compile Include="Loader.xaml.cs">
       <DependentUpon>Loader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="RemoteControlManager.cs" />
     <Compile Include="SystemCommands.cs" />
     <Compile Include="TaskbarIconManager.cs" />

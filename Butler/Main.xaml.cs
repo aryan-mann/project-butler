@@ -1,21 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IdentityModel.Tokens;
-using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Butler.Annotations;
 using ModuleAPI;
 using Application = System.Windows.Application;
 
 namespace Butler {
 
-    public partial class MainWindow: Window {
+    public partial class MainWindow: Window, INotifyPropertyChanged {
 
         //Singular Instance of the User Input prompt
         private CommandLine Cmd { get; set; } = CommandLine.GetInstance();
         public bool Ready = false;
+
+        private string _status = "";
+        public string Status {
+            get { return _status; }
+            private set { _status = value; OnPropertyChanged(); }
+        }
+
+        private UserModule _selectedUserModule = null;
+        public UserModule SelectedUserModule {
+            get { return _selectedUserModule; }
+            private set {
+                _selectedUserModule = value; 
+                OnPropertyChanged();
+            }
+        }
 
         #region Hotkey Registration
         HotkeyHandler _kHandler;
@@ -27,6 +44,8 @@ namespace Butler {
             _kHandler.Dispose();
         }
         #endregion
+
+        public RemoteControlManager RemoteManager { get; } = RemoteControlManager.Instance;
 
         private void SetupComponents(object sender, RoutedEventArgs e) {
 
@@ -53,7 +72,7 @@ namespace Butler {
             LoadedModules.SelectionChanged += LoadedModulesOnSelectionChanged;
 
             // Invokes commands recieved from TCP connections
-            RemoteControlManager.CommandRecieved += (command, tcpClient) => {
+            RemoteManager.CommandRecieved += (command, tcpClient) => {
 
                 Task.Factory.StartNew(() => {
                     UserModule mod = null;
@@ -61,7 +80,7 @@ namespace Butler {
 
                     if(UserModule.FindResponsibleUserModule(command, out mod, out cm, tcpClient)) {
                         Dispatcher.Invoke(() => {
-                            StatusMessage.Content = $"{(tcpClient != null ? tcpClient.Client.RemoteEndPoint + " > " : "")} [{mod.Name}:{mod.Prefix}] > {cm.LocalCommand}";
+                            Status = $"{(tcpClient != null ? tcpClient.Client.RemoteEndPoint + " > " : "")} [{mod.Name}:{mod.Prefix}] > {cm.LocalCommand}";
                             mod.GiveRegexCommand(cm);
                         });
                     }
@@ -69,86 +88,47 @@ namespace Butler {
 
             };
 
-            RemoteControlManager.ClientConnected += client => {
+            RemoteManager.ClientConnected += client => {
                 Dispatcher.Invoke(() => {
-                    StatusMessage.Content = $"({client.Client.RemoteEndPoint}) has connected!";
+                    Status = $"({client.Client.RemoteEndPoint}) has connected!";
                 });
             };
-            RemoteControlManager.ClientDisconnected += client => {
+            RemoteManager.ClientDisconnected += client => {
                 Dispatcher.Invoke(() => {
-                    StatusMessage.Content = $"({client.Client.RemoteEndPoint}) has now disconnected.";
+                    Status = $"({client.Client.RemoteEndPoint}) has disconnected.";
                 });
             };
 
             Command.Responded += (response, com, client) => {
                 Dispatcher.Invoke(() => {
-                    StatusMessage.Content = $"[{com.UserModuleName}:{com.LocalCommand}] > {response}";
+                    Status = $"[{com.UserModuleName}] > {response}";
                 });
             };
         }
         
         // New item from Loaded Modules selected
         private void LoadedModulesOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs) {
-            ListBoxItem item = (ListBoxItem) LoadedModules.SelectedItem;
-            if(item == null) { return; }
-
-            KeyValuePair<int, UserModule> val = (KeyValuePair<int, UserModule>) item.DataContext;
-            if(val.Value == null) { return; }
-
-            DisplayInformationFor(val.Value);
+            SelectedUserModule = LoadedModules.SelectedItem as UserModule;
         }
-
-        // Changes UI based on which Module is selected
-        private void DisplayInformationFor(UserModule um) {
-            UmName.Content = um.Name;
-            UmCommands.Items.Clear();
-
-            foreach(KeyValuePair<string, Regex> pair in um.RegisteredCommands) {
-                UmCommands.Items.Add(new ListBoxItem() {
-                    Content = pair.Value,
-                    DataContext = pair
-                });
-            }
-
-            UmVersion.Content = um.SemVer;
-            UmAuthor.Content = um.Author;
-            UmWebsite.Content = um.Website;
-            UmDirectory.Content = um.BaseDirectory;
-            UmCommandCount.Content = um.RegisteredCommands.Count.ToString();
-            UmTrigger.Content = um.Prefix;
-        }
-
+        
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
             //Load all modules on application start
             //ModuleLoader.LoadAll();
-            SyncModules();
+            //SyncModules();
         }
-
-        // Syncs ModuleLoader.ModuleLoadOrder and LoadedModules.Items
-        private void SyncModules() {
-            LoadedModules.Items.Clear();
-            foreach(KeyValuePair<int, UserModule> pair in ModuleLoader.ModuleLoadOrder) {
-                LoadedModules.Items.Add(new ListBoxItem() {
-                    Content = pair.Value.Name,
-                    DataContext = pair
-                });
-            }
-        }
-
+        
         /* Right Menu Button Events (START) */
         private void AboutButton_Click(object sender, RoutedEventArgs e) {
             MessageBox.Show("Developed By Aryan Mann", "Hey!", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         private void RemoteButton_Click(object sender, RoutedEventArgs e) {
-            if(!RemoteControlManager.ServerRunning) {
-                RemoteButton.Background = (Brush) Application.Current.Resources["On"];
-                RemoteControlManager.StartServer();
+            if(!RemoteManager.ServerRunning) {
+                RemoteManager.StartServer();
             } else {
-                RemoteButton.Background = (Brush) Application.Current.Resources["Off"];
-                RemoteControlManager.StopServer();
+                RemoteManager.StopServer();
             }
 
-            StatusMessage.Content = $"The server is now{(RemoteControlManager.ServerRunning ? "" : " not")} running.";
+            Status = (RemoteManager.ServerRunning ? "Started" : "Stopped") + " the server.";
         }
         /* Right Menu Button Events (END) */
 
@@ -198,6 +178,12 @@ namespace Butler {
                     break;
             }
         }
-        
+
+        // INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

@@ -5,48 +5,76 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:butler="clr-namespace:Butler"
         mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="Main" Height="600" Width="900" Icon="pack://siteoforigin:,,,/Resources/butlerlogo2.png" MinHeight="300" MinWidth="600">
-    <Grid Style="{StaticResource DefaultGrid}">
-        <ListBox Style="{StaticResource DefaultListBox}" x:Name="LoadedModules" HorizontalAlignment="Left" Width="200" >
-            <ListBox.Resources>
-                <Style BasedOn="{StaticResource DefaultListBoxItem}" TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                </Style>
-            </ListBox.Resources>
-            <ListBoxItem Content="BOMB THEM"/>
-        </ListBox>
-        <Grid Style="{StaticResource DefaultGrid}" Margin="0,10,10,10" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="66">
-            <StackPanel x:Name="SideMenu">
-                <Button x:Name="RemoteButton" Style="{StaticResource DefaultButton}" Background="{x:Static butler:RemoteControlManager.ServerStatusColor}" 
-                        Content="{x:Static butler:RemoteControlManager.ServerRunningStatus}" Click="RemoteButton_Click" Height="60" Margin="0" Width="Auto" />
-                <Button Style="{StaticResource DefaultButton}" Content="About" Click="AboutButton_Click" />
-            </StackPanel>
-        </Grid>
-        <Grid Style="{StaticResource DefaultGrid}" Margin="200,0,90,0">
-            <Label Style="{StaticResource DefaultLabel}" FontSize="32" VerticalAlignment="Top" x:Name="UmName" Content="Module Name" Height="63" />
-            <ListBox Style="{StaticResource DefaultListBox}" x:Name="UmCommands" Margin="0,237,0,30" MinHeight="20">
+    <Window.Resources>
+        <butler:NullToOpacityConverter x:Key="NullToOpacityConverter"/>
+    </Window.Resources>
+    <Grid Background="{StaticResource BackgroundLevel1}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="80"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <ListBox Style="{StaticResource DefaultListBox}" Grid.Column="0" Background="{StaticResource BackgroundLevel3}" DataContext="{x:Static butler:ModuleLoader.ModuleLoadOrder}" ItemsSource="{Binding Path=Values}" x:Name="LoadedModules">
                 <ListBox.Resources>
-                    <Style BasedOn="{StaticResource DefaultListBoxItem}" TargetType="ListBoxItem" />
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItem}">
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
                 </ListBox.Resources>
             </ListBox>
-            <Label Content="Hey! I'm finished loading." x:Name="StatusMessage" Margin="0" VerticalAlignment="Bottom" Height="29" Foreground="White" VerticalContentAlignment="Center"/>
-            <Grid Height="170" Background="{StaticResource ZinnwalditeBrown}" Margin="0,70,0,0" VerticalAlignment="Top">
+        </Grid>
+        <Grid Opacity="{Binding SelectedUserModule, Converter={StaticResource NullToOpacityConverter}}" Grid.Column="1">
+            <Label FontSize="32" Background="{StaticResource BackgroundLevel2}" Foreground="{StaticResource SoftWhite}" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" x:Name="UmName" Content="{Binding SelectedUserModule.Name}" Height="60" Margin="10,10,10,0" />
+            <ListBox Style="{StaticResource DefaultListBox}" DataContext="{Binding SelectedUserModule.RegisteredCommands}" ItemsSource="{Binding Values}" x:Name="UmCommands" VerticalAlignment="Stretch" Margin="0,245,0,30" MinHeight="20">
+                <ListBox.Resources>
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItem}">
+                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                        <Setter Property="FontSize" Value="21"/>
+                        <Setter Property="Padding" Value="20 10 10 10"/>
+                    </Style>
+                </ListBox.Resources>
+            </ListBox>
+            <Grid Margin="0,70,0,0" VerticalAlignment="Top" Height="170">
                 <Grid.Resources>
-                    <Style BasedOn="{StaticResource DefaultLabel}" TargetType="Label"/>
+                    <Style TargetType="Label" BasedOn="{StaticResource DefaultLabel}"/>
                 </Grid.Resources>
+
                 <Label Content="Version" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="64" />
+                <Label x:Name="UmVersion" Content="{Binding SelectedUserModule.SemVer}" Margin="79,10,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left" Height="26"/>
+
                 <Label Content="Author" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="64" />
+                <Label x:Name="UmAuthor" Content="{Binding SelectedUserModule.Author}" Margin="79,41,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left" Height="26"/>
+
                 <Label Content="Website" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="64" />
+                <Label x:Name="UmWebsite" Content="{Binding SelectedUserModule.Website}" Margin="79,72,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left" Height="25"/>
+
                 <Label Content="Directory" HorizontalAlignment="Left" Margin="10,102,0,0" VerticalAlignment="Top" Width="64"/>
+                <Label x:Name="UmDirectory" Content="{Binding SelectedUserModule.ModuleDirectory}" Margin="79,102,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left" Height="26"/>
+
                 <Label Content="Prefix" HorizontalAlignment="Left" Margin="10,135,0,0" VerticalAlignment="Top" Width="64" />
-                <Label x:Name="UmVersion" Content="" Margin="79,10,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left"/>
-                <Label x:Name="UmAuthor" Content="" Margin="79,41,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left"/>
-                <Label x:Name="UmWebsite" Content="" Margin="79,72,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left"/>
-                <Label x:Name="UmDirectory" Content="" Margin="79,102,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left"/>
-                <Label x:Name="UmTrigger" Content="" Margin="79,135,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left"/>
-                <Label x:Name="UmCommandCount" Content="0" HorizontalAlignment="Right" Margin="0,10,10,10" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="82" Background="{StaticResource MyrtleGreen}" Foreground="White" FontWeight="Bold" Width="138"/>
+                <Label x:Name="UmPrefix" Content="{Binding SelectedUserModule.Prefix}" Margin="79,135,153,0" VerticalAlignment="Top" HorizontalContentAlignment="Left" Height="26"/>
+
+                <Label x:Name="UmCommandCount" Content="{Binding Path=SelectedUserModule.RegisteredCommands.Count, TargetNullValue=0}" HorizontalAlignment="Right" Margin="0,10,10,9" VerticalAlignment="Stretch" 
+                       HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="82" Foreground="White" FontWeight="Bold" Width="138"/>
             </Grid>
+        </Grid>
+        <Label Grid.Column="1"  Content="{Binding Status}" x:Name="StatusMessage" Margin="0" VerticalAlignment="Bottom" 
+                   Background="{StaticResource BackgroundLevel4}"
+                   Height="29" Foreground="White" VerticalContentAlignment="Center"/>
+        <Grid Grid.Column="2" Background="{StaticResource BackgroundLevel2}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <StackPanel x:Name="SideMenu" Background="{StaticResource BackgroundLevel3}">
+                <Rectangle Fill="{Binding RemoteManager.ServerStatusColor, Mode=OneWay}" Height="20"/>
+                <Button x:Name="RemoteButton" Style="{StaticResource DefaultButton}" Background="{StaticResource BackgroundLevel2}" BorderThickness="0" Click="RemoteButton_Click" Height="40" Margin="0" Width="Auto">
+                    <TextBlock Margin="5 2 5 2" Foreground="{StaticResource SoftWhite}" TextWrapping="Wrap" Text="{Binding RemoteManager.ServerRunningStatus, Mode=OneWay}"/>
+                </Button>
+                <Rectangle Fill="{Binding RemoteManager.ServerStatusColor, Mode=OneWay}" Height="20"/>
+                <Button Content="About" Click="AboutButton_Click" />
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>
+
+
 

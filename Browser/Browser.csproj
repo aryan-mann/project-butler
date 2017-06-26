@@ -92,7 +92,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "I:\Project Butler\Butler\Butler\bin\Debug\Modules\$(ProjectName)"
-copy "$(TargetPath)" "I:\Project Butler\Butler\Butler\bin\Debug\Modules\$(ProjectName)\$(TargetFileName)"</PostBuildEvent>
+copy "$(TargetPath)" "I:\Project Butler\Butler\Butler\bin\Debug\Modules\$(ProjectName)...ignore\$(TargetFileName)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
