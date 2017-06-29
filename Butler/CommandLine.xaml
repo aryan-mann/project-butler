@@ -6,6 +6,6 @@
         mc:Ignorable="d"
         Title="CommandLine" WindowStyle="None" WindowStartupLocation="Manual" Visibility="Visible" Background="#00000000" ResizeMode="NoResize" AllowsTransparency="True" Height="144">
     <Grid x:Name="Grd" Background="#00000000" Height="144">
-        <TextBox x:Name="Input" Text="Enter Command Here" Margin="0" VerticalContentAlignment="Center" FontSize="72" Background="#BF232425" MaxLines="1" Foreground="White" BorderBrush="{x:Null}" BorderThickness="0" TextDecorations="{x:Null}" SelectionBrush="#99FFFFFF" FontWeight="Bold" />
+        <TextBox x:Name="Input" Padding="40 0 0 0" Text="Enter Command Here" Margin="0" VerticalContentAlignment="Center" FontSize="72" Background="#BF232425" MaxLines="1" Foreground="White" BorderBrush="{x:Null}" BorderThickness="0" TextDecorations="{x:Null}" SelectionBrush="#99FFFFFF" FontWeight="Bold" />
     </Grid>
 </Window>

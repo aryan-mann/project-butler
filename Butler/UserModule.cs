@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -197,6 +198,45 @@ namespace Butler {
             command = new Command(shortListModule.Prefix, shortListModule.RegisteredCommands[selectedRegexKey], rest, selectedRegexKey, client);
 
             return true;
+        }
+
+        public static async Task<(UserModule, Command)> FindResponsibleUserModuleAsync(string query, TcpClient client = null) {
+
+            if(string.IsNullOrWhiteSpace(query)) {
+                return (null, null);
+            }
+
+            Match m = Regex.Match(query, "^(?<first>.+?)\\s+(?<rest>.+)$");
+            string prefix = m.Groups["first"].Value;
+            string rest = m.Groups["rest"].Value;
+
+            // Find the module with the given prefix
+            UserModule shortlistedModule = ModuleLoader.ModuleLoadOrder.Values.FirstOrDefault(val => val.Prefix == prefix);
+            if(shortlistedModule == null) { return (null, null); }
+
+            string recognizedRegexKey = string.Empty;
+            bool matchFound = false;
+            
+            await Task.Run(() => {
+                // If any module has that prefix, cycle through all it's RegisteredCommands
+                // and see if they match with the user input
+
+                foreach (var regex in shortlistedModule?.RegisteredCommands) {
+                    if (regex.Value.Match(rest).Success) {
+                        recognizedRegexKey = regex.Key;
+                        matchFound = true;
+                    }
+
+                    if (matchFound) { break; }
+                }
+
+            });
+
+            if(!matchFound) { return (shortlistedModule, null); }
+
+            Command cmd = new Command(shortlistedModule.Name, shortlistedModule.RegisteredCommands[recognizedRegexKey], rest, recognizedRegexKey, client);
+            return (shortlistedModule, cmd);
+
         }
 
         /// <summary>

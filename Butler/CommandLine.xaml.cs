@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Butler.Annotations;
 using ModuleAPI;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
@@ -10,16 +14,14 @@ namespace Butler {
     /// <summary>
     /// Interaction logic for CommandLine.xaml
     /// </summary>
-    public partial class CommandLine: Window {
+    public partial class CommandLine: Window, INotifyPropertyChanged {
 
         //Singleton-esque method of getting the command line 
         private static CommandLine _cmdInstance = new CommandLine();
-
         public static CommandLine GetInstance() {
             _cmdInstance = _cmdInstance ?? new CommandLine();
             return _cmdInstance;
         }
-
         private CommandLine() {
             InitializeComponent();
 
@@ -39,6 +41,8 @@ namespace Butler {
                 Hide();
             };
         }
+        
+        private QueueList<string> _commandHistory = new QueueList<string>(10);
 
         // Control window visibility using keyboard
         private void CommandLine_PreviewKeyDown(object sender, KeyEventArgs e) {
@@ -48,30 +52,30 @@ namespace Butler {
             } else if(e.Key == Key.Enter && Input.IsKeyboardFocused) {
                 InitiateCommand();
                 e.Handled = true;
+            } else if (e.Key == Key.Up) {
+                _commandHistory.SetToNextNode();
+                Input.Text = _commandHistory.CurrentNode;
+                e.Handled = true;
+            } else if (e.Key == Key.Down) {
+                _commandHistory.SetToPreviousNode();
+                Input.Text = _commandHistory.CurrentNode;
             }
         }
-
-
-        /* Searches through all modules to see if any one of their registered regex's 
-        matches the user input, if it does, we invoke the OnCommandReceived function in the
-        modules hook class */
+        
         private void InitiateCommand() {
             string query = Input.Text;
             _cmdInstance.Hide();
 
-            Task.Factory.StartNew(() => {
-
+            Task.Run(() => {
                 UserModule um = null;
                 Command cm = null;
-                
-                if (UserModule.FindResponsibleUserModule(query, out um, out cm)) {
 
+                if(UserModule.FindResponsibleUserModule(query, out um, out cm)) {
                     Dispatcher.Invoke(() => {
                         um.GiveRegexCommand(cm);
+                        _commandHistory.Add(cm.ToString());
                     });
-
                 }
-
             });
 
         }
@@ -79,10 +83,15 @@ namespace Butler {
         // When window is shown, put focus on the command text
         private void CommandLine_Activated(object sender, EventArgs e) {
             Activate();
-            Input.Focus();
-            Keyboard.ClearFocus();
-            Keyboard.Focus(Input);
-            Input.SelectAll();
+            Focus();
+            BringIntoView();    
+
+            Keyboard.PrimaryDevice.Focus(Input);
+            if (Input.Text == "Enter Command Here") {
+                Input.SelectAll();
+            } else {
+                Input.SelectionStart = Input.Text.Length;
+            }
         }
 
         // Place textbox on the bottom of the screen
@@ -93,5 +102,11 @@ namespace Butler {
         }
 
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

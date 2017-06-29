@@ -70,7 +70,7 @@
                     <TextBlock Margin="5 2 5 2" Foreground="{StaticResource SoftWhite}" TextWrapping="Wrap" Text="{Binding RemoteManager.ServerRunningStatus, Mode=OneWay}"/>
                 </Button>
                 <Rectangle Fill="{Binding RemoteManager.ServerStatusColor, Mode=OneWay}" Height="20"/>
-                <Button Content="About" Click="AboutButton_Click" />
+                <Button Style="{StaticResource DefaultButton}" Content="About" Click="AboutButton_Click" />
             </StackPanel>
         </Grid>
     </Grid>

@@ -56,6 +56,9 @@ namespace ModuleAPI {
             Client.GetStream().Write(message, 0, message.Length);
             Responded?.Invoke(text, this, Client);
         }
+
+        public override string ToString() => $"{UserModuleName} {UserInput}";
+        
     }
 
 }
