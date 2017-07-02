@@ -37,8 +37,8 @@ namespace ModuleAPI
         /// <summary>
         /// When a user input matches the Regex(s) provided by our module
         /// </summary>
-        /// <param name="command">The command recieved</param>
-        public abstract Task OnCommandRecieved(Command command);
+        /// <param name="cmd">The command recieved</param>
+        public abstract Task OnCommandRecieved(Command cmd);
 
         /// <summary>
         /// Opens the settings panel for the Module

@@ -17,53 +17,60 @@ namespace Butler {
         public override string SemVer => "0.1.0";
         public override string Author => "Butler";
         public override Uri Website => new Uri(@"http://www.butler.aryanmann.com/");
-        public override string Prefix => "system";
+        public override string Prefix => "--";
 
         public override Dictionary<string, Regex> RegisteredCommands => new Dictionary<string, Regex>() {
             ["Command List"] = new Regex(@"command list"),
             ["Command API"] = new Regex(@"command api"),
-            ["Test"] = new Regex(@"Test", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace)
+            ["Settings"] = new Regex(@"^config (?<prefix>.+)$")
         };
 
-        public override async Task OnCommandRecieved(Command command) {
+        public override async Task OnCommandRecieved(Command cmd) {
 
-            switch (command.LocalCommand) {
-                case "Command API":
-                    if(!command.IsLocalCommand) {
-                        List<ModuleInfoPacket> packetList = new List<ModuleInfoPacket>();
-
-                        await Task.Run(() => {
-                            foreach (var userModule in ModuleLoader.ModuleLoadOrder) {
-                                packetList.Add(ModuleInfoPacket.FromUserModule(userModule.Value));
-                            }
-                        });
-
-                        command.Respond(JsonConvert.SerializeObject(packetList)); 
-                    }
-
+            if(cmd.LocalCommand == "Command API") {
+                if(cmd.IsLocalCommand)
                     return;
-                case "Command List":
-                    List<UserModule> uModules = ModuleLoader.ModuleLoadOrder.Values.ToList();
-                    string output = $"{uModules.Count} Available Commands:- \n\n";
 
-                    await Task.Run(() => {
-                        foreach (var mod in uModules) {
-                            output += $"> {mod.Name} ({mod.Prefix}) [{mod.RegisteredCommands.Count}]\n\n";
-                            foreach (var regexes in mod.RegisteredCommands) {
-                                output += $"   > {regexes.Key} => {regexes.Value.ToString()}\n";
-                            }
-                            output += $"\n";
+                var packetList = new List<ModuleInfoPacket>();
+
+                await Task.Run(() => {
+                    foreach(var userModule in ModuleLoader.ModuleLoadOrder) {
+                        packetList.Add(ModuleInfoPacket.FromUserModule(userModule.Value));
+                    }
+                });
+
+                cmd.Respond(JsonConvert.SerializeObject(packetList));
+
+                return;
+            }
+
+            if(cmd.LocalCommand == "Command List") {
+                var uModules = ModuleLoader.ModuleLoadOrder.Values.ToList();
+                string output = $"{uModules.Count} Available Commands:- \n\n";
+
+                await Task.Run(() => {
+                    foreach(var mod in uModules) {
+                        output += $"> {mod.Name} ({mod.Prefix}) [{mod.RegisteredCommands.Count}]\n\n";
+                        foreach(var regexes in mod.RegisteredCommands) {
+                            output += $"   > {regexes.Key} => {regexes.Value.ToString()}\n";
                         }
-                    });
-
-                    if(!command.IsLocalCommand) {
-                        command.Respond(output);
+                        output += $"\n";
                     }
+                });
 
-                    return;
-                case "Test":
-                    RemoteControlManager.Instance.InvokeOnPseudoCommandRecieved("music start radio", null);
-                    break;
+                if(!cmd.IsLocalCommand) {
+                    cmd.Respond(output);
+                }
+
+                return;
+            }
+
+            if(cmd.LocalCommand == "Settings") {
+                var prefix = RegisteredCommands[cmd.LocalCommand].Match(cmd.UserInput).Groups["prefix"].Value.Trim();
+                var module = ModuleLoader.ModuleLoadOrder.Values.FirstOrDefault(v => v.Prefix == prefix);
+                if(module == null) { return; }
+
+                module.GiveConfigureSettingsCommand();
             }
         }
 

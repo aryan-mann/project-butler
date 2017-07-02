@@ -41,9 +41,9 @@ namespace Butler {
         public void Add(T item) {
             if(_nodes.Count == 0) { _nodes[0] = item; return; }
 
-            int topLoopIndex = _nodes.Count >= MaxSize ? _nodes.Count - 2 : _nodes.Count - 1;
+            var topLoopIndex = _nodes.Count >= MaxSize ? _nodes.Count - 2 : _nodes.Count - 1;
             
-            for (int i = topLoopIndex; i >= 0; i--) {
+            for (var i = topLoopIndex; i >= 0; i--) {
                 _nodes[i + 1] = _nodes[i];
             }
 
@@ -52,7 +52,7 @@ namespace Butler {
         }
 
         public void AddRange(params T[] list) {
-            foreach (T val in list) {
+            foreach (var val in list) {
                 Add(val);
             }
         }

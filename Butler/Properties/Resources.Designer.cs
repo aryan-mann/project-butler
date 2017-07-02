@@ -39,7 +39,7 @@ namespace Butler.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Butler.Properties.Resources", typeof(Resources).Assembly);
+                    var temp = new global::System.Resources.ResourceManager("Butler.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -65,7 +65,7 @@ namespace Butler.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap ButlerLogo {
             get {
-                object obj = ResourceManager.GetObject("ButlerLogo", resourceCulture);
+                var obj = ResourceManager.GetObject("ButlerLogo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -75,7 +75,7 @@ namespace Butler.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap ButlerLogo2 {
             get {
-                object obj = ResourceManager.GetObject("ButlerLogo2", resourceCulture);
+                var obj = ResourceManager.GetObject("ButlerLogo2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -85,7 +85,7 @@ namespace Butler.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Load {
             get {
-                object obj = ResourceManager.GetObject("Load", resourceCulture);
+                var obj = ResourceManager.GetObject("Load", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

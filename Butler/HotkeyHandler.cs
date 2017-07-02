@@ -43,7 +43,7 @@ namespace Butler {
         }
 
         private void SetupHotKey(IntPtr handle) {
-            bool b = RegisterHotKey(handle, GetType().GetHashCode(), 0x0008, 0x1B);
+            var b = RegisterHotKey(handle, GetType().GetHashCode(), 0x0008, 0x1B);
 
             Console.WriteLine("Hotkey Registration " + (b ? "Succeeded :)" : "Failed :("));
         }

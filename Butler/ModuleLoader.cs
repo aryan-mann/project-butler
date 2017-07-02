@@ -16,13 +16,13 @@ namespace Butler {
         /// </summary>
         public static string ModuleDirectory {
             get {
-                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Modules");
+                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Modules");
                 if(!Directory.Exists(path)) { Directory.CreateDirectory(path); }
 
                 return path;
             }
         }
-        
+
         /// <summary>
         /// Loaded Modules and the order they are loaded in
         /// </summary>
@@ -46,20 +46,20 @@ namespace Butler {
             ModuleLoadOrder = ModuleLoadOrder ?? new Dictionary<int, UserModule>();
             ModuleLoadOrder?.Clear();
 
-            UserModule sysModule = UserModule.FromType(typeof(SystemCommands));
+            var sysModule = UserModule.FromType(typeof(SystemCommands));
             ModuleLoadOrder.Add(ModuleLoadOrder.Count, sysModule);
 
-            string[] directories = Directory.GetDirectories(ModuleDirectory, "*", SearchOption.TopDirectoryOnly);
+            var directories = Directory.GetDirectories(ModuleDirectory, "*", SearchOption.TopDirectoryOnly);
             LoadingStarted?.Invoke(directories.Length);
-            
+
             // Search through all directories and add user modules
             directories.ToList().ForEach(dir => {
-                UserModule um = GetModuleFromDirectory(dir);
+                var um = GetModuleFromDirectory(dir);
 
                 // If a module is detected, add it to the ModuleLoadOrder dictionary
                 if(um != null) {
-                    int index = ModuleLoadOrder.Count + 1;
-                    bool canUse = false;
+                    var index = ModuleLoadOrder.Count + 1;
+                    var canUse = false;
                     do {
                         if(!ModuleLoadOrder.ContainsKey(index)) {
                             canUse = true;
@@ -68,7 +68,7 @@ namespace Butler {
                         } else { index++; }
                     } while(canUse == false);
                 }
-                
+
             });
 
             LoadingEnded?.Invoke();
@@ -77,27 +77,26 @@ namespace Butler {
             ModuleLoadOrder = ModuleLoadOrder ?? new Dictionary<int, UserModule>();
             ModuleLoadOrder?.Clear();
 
-            UserModule sysModule = await UserModule.FromTypeAsync(typeof(SystemCommands));
+            var sysModule = await UserModule.FromTypeAsync(typeof(SystemCommands));
             ModuleLoadOrder.Add(ModuleLoadOrder.Count, sysModule);
 
-            string[] directories = Directory.GetDirectories(ModuleDirectory, "*", SearchOption.TopDirectoryOnly);
+            var directories = Directory.GetDirectories(ModuleDirectory, "*", SearchOption.TopDirectoryOnly);
             LoadingStarted?.Invoke(directories.Length);
 
-            List<UserModule> foundModules = await GetModulesFromDirectoriesAsync(directories);
+            var foundModules = await GetModulesFromDirectoriesAsync(directories);
             foundModules.ForEach(um => {
-                int index = ModuleLoadOrder.Count + 1;
-                bool canUse = false;
+                var index = ModuleLoadOrder.Count + 1;
+                var canUse = false;
 
                 do {
-                    if (!ModuleLoadOrder.ContainsKey(index)) {
+                    if(!ModuleLoadOrder.ContainsKey(index)) {
                         canUse = true;
                         ModuleLoadOrder.Add(index, um);
                         ModuleLoaded?.Invoke(um);
-                    }
-                    else {
+                    } else {
                         index++;
                     }
-                } while (canUse == false);
+                } while(canUse == false);
 
             });
 
@@ -110,64 +109,81 @@ namespace Butler {
         /// <param name="directory">Location of the module</param>
         /// <returns></returns>
         private static UserModule GetModuleFromDirectory(string directory) {
-            IEnumerable<string> files = Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories);
+            var files = Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories);
 
             UserModule mod = null;
             // Load each *.dll file found in the directory
             files.ToList().ForEach(async file => {
-                Assembly asm = Assembly.LoadFrom(file);
+                try {
+                    var asm = Assembly.LoadFrom(file);
 
-                // Search for a type in the loaded assembly that:- 
-                // 1. Is a child of the Module class
-                // 2. Has the ApplicationHook attribute (that can only be applied to one class)
+                    // Search for a type in the loaded assembly that:- 
+                    // 1. Is a child of the Module class
+                    // 2. Has the ApplicationHook attribute (that can only be applied to one class)
 
-                List<Type> startClasses = asm.GetTypes().Where(t =>
-                    t.IsClass &&
-                    t.BaseType == typeof(ModuleAPI.Module) &&
-                    t.GetCustomAttribute<ApplicationHookAttribute>() != null
-                ).ToList();
-
-                // If any class meeting these conditions is found,
-                // Store that as the 'Startup Class' i.e. the class
-                // which will recieve commands through Project Butler
-                if(startClasses.Count > 0) {
-                    Type startupClass = startClasses[0];
-                    mod = await UserModule.FromTypeAsync(startupClass);
-                }
-            });
-            
-            return mod;
-        }
-        private static async Task<List<UserModule>> GetModulesFromDirectoriesAsync(string[] directories) {
-
-            IEnumerable<Task<UserModule>> modTasks = directories.Where(dir => !dir.EndsWith("...ignore")).Select(async dir => {
-                string[] files = Directory.GetFiles(dir, "*.dll", SearchOption.AllDirectories);
-                UserModule mod = null;
-
-                foreach (string file in files) {
-                    Assembly asm = Assembly.LoadFrom(file);
-
-                    if(mod != null) { goto foundMod; }
-
-                    List<Type> startClasses = asm.GetTypes().Where(t =>
+                    var startClasses = asm.GetTypes().Where(t =>
                         t.IsClass &&
                         t.BaseType == typeof(ModuleAPI.Module) &&
                         t.GetCustomAttribute<ApplicationHookAttribute>() != null
                     ).ToList();
 
-                    if(startClasses.Count <= 0) { continue; }
-
-                    Type startupClass = startClasses[0];
-                    mod = await UserModule.FromTypeAsync(startupClass);
+                    // If any class meeting these conditions is found,
+                    // Store that as the 'Startup Class' i.e. the class
+                    // which will recieve commands through Project Butler
+                    if (startClasses.Count > 0) {
+                        var startupClass = startClasses[0];
+                        mod = await UserModule.FromTypeAsync(startupClass);
+                    }
+                } catch (Exception exc) {
+                    Logger.Log("Module loading error", exc);  
                 }
-
-                foundMod:
-                    return mod;
             });
 
-            List<UserModule> foundModules = new List<UserModule>();
-            foreach (Task<UserModule> modTask in modTasks) {
-                UserModule um = await modTask;
+            return mod;
+        }
+        private static async Task<List<UserModule>> GetModulesFromDirectoriesAsync(string[] directories) {
+
+            var modTasks = directories.Where(dir => !dir.EndsWith("...ignore")).Select(async dir => {
+                var files = Directory.GetFiles(dir, "*.dll", SearchOption.AllDirectories);
+                UserModule mod = null;
+
+                try {
+                    foreach (var file in files) {
+                        var asm = Assembly.LoadFrom(file);
+
+                        if (mod != null) {
+                            goto foundMod;
+                        }
+
+                        var startClasses = asm.GetTypes().Where(t =>
+                            t.IsClass &&
+                            t.BaseType == typeof(ModuleAPI.Module) &&
+                            t.GetCustomAttribute<ApplicationHookAttribute>() != null
+                        ).ToList();
+
+                        if (startClasses.Count <= 0) {
+                            continue;
+                        }
+
+                        var startupClass = startClasses[0];
+                        mod = await UserModule.FromTypeAsync(startupClass);
+                    }
+
+                    foundMod:
+                    return mod;
+
+                }
+                catch (Exception exc) {
+                    Logger.Log("Module loading error", exc);
+                    return null;
+                }
+            });
+
+            var foundModules = new List<UserModule>();
+            foreach(var modTask in modTasks) {
+                if (modTask == null) continue;
+                
+                var um = await modTask;
                 if(um != null)
                     foundModules.Add(um);
             }

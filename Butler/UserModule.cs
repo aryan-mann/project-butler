@@ -26,7 +26,8 @@ namespace Butler {
                 return _instance;
             }
         }
-        public bool Enabled { get; set; } = true;
+
+        public bool Enabled { get; set; } = false;
 
         /* Module Properties */
         private string _name;
@@ -88,6 +89,8 @@ namespace Butler {
             }
         }
 
+        public bool IsInitialized { get; private set; }
+
         private Dictionary<string, Regex> _registeredCommands;
         public Dictionary<string, Regex> RegisteredCommands {
             get {
@@ -108,21 +111,29 @@ namespace Butler {
 
         private UserModule(Type t) {
             ModuleType = t;
-            _onInitialized = ModuleType.GetMethod("OnInitialized");
-            _onCommandRecievedMethod = ModuleType.GetMethod("OnCommandRecieved");
-            _configureSettings = ModuleType.GetMethod("ConfigureSettings");
-            _onShutdown = ModuleType.GetMethod("OnShutdown");
 
-            GiveInitializedCommand();
+            try {
+                _onInitialized = ModuleType.GetMethod("OnInitialized");
+                _onCommandRecievedMethod = ModuleType.GetMethod("OnCommandRecieved");
+                _configureSettings = ModuleType.GetMethod("ConfigureSettings");
+                _onShutdown = ModuleType.GetMethod("OnShutdown");
+            } catch (Exception exc) {
+                Logger.Log("Could not hook to module method", exc);  
+            }
+
         }
 
         //Indicate to the Module that a command has been received for it 
         public void GiveRegexCommand(Command cmd) {
+            if(!IsInitialized)
+                GiveInitializedCommand();
+
             if(!RegisteredCommands.Keys.Contains(cmd.LocalCommand)) { return; }
             Task.Run(() => _onCommandRecievedMethod.Invoke(Instance, new object[] { cmd }));
         }
         public void GiveInitializedCommand() {
-            Task.Run(() => _onInitialized.Invoke(Instance, new object[] { }));
+            if(!IsInitialized)
+                Task.Run(() => _onInitialized.Invoke(Instance, new object[] { }));
         }
         public void GiveConfigureSettingsCommand() {
             Task.Run(() => _configureSettings.Invoke(Instance, new object[] { }));
@@ -139,11 +150,11 @@ namespace Butler {
         /// <param name="name">Name of the value</param>
         /// <returns></returns>
         private T GetPropertyValue<T>(string name) {
-            PropertyInfo pInfo = ModuleType.GetProperty(name);
+            var pInfo = ModuleType.GetProperty(name);
             if(pInfo == null) { return default(T); }
 
             try {
-                object ob = pInfo.GetValue(Instance);
+                var ob = pInfo.GetValue(Instance);
                 if(ob == null) { return default(T); } else { return (T) ob; }
             } catch { return default(T); }
 
@@ -168,15 +179,15 @@ namespace Butler {
                 return false;
             }
 
-            string selectedRegexKey = "";
-            bool matchFound = false;
+            var selectedRegexKey = "";
+            var matchFound = false;
 
-            Match m = Regex.Match(query, "^(?<first>.+?)\\s+(?<rest>.+)$");
-            string firstWord = m.Groups["first"].Value;
-            string rest = m.Groups["rest"].Value;
+            var m = Regex.Match(query, "^(?<first>.+?)\\s+(?<rest>.+)$");
+            var firstWord = m.Groups["first"].Value;
+            var rest = m.Groups["rest"].Value;
 
-            UserModule shortListModule = ModuleLoader.ModuleLoadOrder.Values.FirstOrDefault(val => val.Prefix == firstWord);
-            if(shortListModule != null) {
+            var shortListModule = ModuleLoader.ModuleLoadOrder.Values.FirstOrDefault(val => val.Prefix == firstWord);
+            if(shortListModule != null && shortListModule.Enabled) {
                 foreach(var rgxs in shortListModule.RegisteredCommands) {
 
                     if(matchFound) { break; }
@@ -206,35 +217,35 @@ namespace Butler {
                 return (null, null);
             }
 
-            Match m = Regex.Match(query, "^(?<first>.+?)\\s+(?<rest>.+)$");
-            string prefix = m.Groups["first"].Value;
-            string rest = m.Groups["rest"].Value;
+            var m = Regex.Match(query, "^(?<first>.+?)\\s+(?<rest>.+)$");
+            var prefix = m.Groups["first"].Value;
+            var rest = m.Groups["rest"].Value;
 
             // Find the module with the given prefix
-            UserModule shortlistedModule = ModuleLoader.ModuleLoadOrder.Values.FirstOrDefault(val => val.Prefix == prefix);
+            var shortlistedModule = ModuleLoader.ModuleLoadOrder.Values.FirstOrDefault(val => val.Prefix == prefix);
             if(shortlistedModule == null) { return (null, null); }
 
-            string recognizedRegexKey = string.Empty;
-            bool matchFound = false;
-            
+            var recognizedRegexKey = string.Empty;
+            var matchFound = false;
+
             await Task.Run(() => {
                 // If any module has that prefix, cycle through all it's RegisteredCommands
                 // and see if they match with the user input
 
-                foreach (var regex in shortlistedModule?.RegisteredCommands) {
-                    if (regex.Value.Match(rest).Success) {
+                foreach(var regex in shortlistedModule?.RegisteredCommands) {
+                    if(regex.Value.Match(rest).Success) {
                         recognizedRegexKey = regex.Key;
                         matchFound = true;
                     }
 
-                    if (matchFound) { break; }
+                    if(matchFound) { break; }
                 }
 
             });
 
             if(!matchFound) { return (shortlistedModule, null); }
 
-            Command cmd = new Command(shortlistedModule.Name, shortlistedModule.RegisteredCommands[recognizedRegexKey], rest, recognizedRegexKey, client);
+            var cmd = new Command(shortlistedModule.Name, shortlistedModule.RegisteredCommands[recognizedRegexKey], rest, recognizedRegexKey, client);
             return (shortlistedModule, cmd);
 
         }

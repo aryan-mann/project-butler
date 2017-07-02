@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IdentityModel.Tokens;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -164,6 +165,9 @@ namespace Butler {
             StateChanged += MainWindow_StateChanged;
         }
 
+        private void ConfigureSelectedUserModule(object sender, RoutedEventArgs e) {
+            SelectedUserModule?.GiveConfigureSettingsCommand(); }
+
         // Hide/Show in taskbar depending on window visibility
         private void MainWindow_StateChanged(object sender, EventArgs e) {
             switch(WindowState) {
@@ -184,6 +188,10 @@ namespace Butler {
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void ShowLogs_OnClick(object sender, RoutedEventArgs e) {
+            MessageBox.Show(Logger.LogSet.FirstOrDefault()?.Exception.Message);
         }
     }
 }

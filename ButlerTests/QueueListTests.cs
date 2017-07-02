@@ -9,14 +9,14 @@ namespace ButlerTests {
 
         [TestMethod]
         public void AddEmpty() {
-            QueueList<int> intQueue = new QueueList<int>(5);
+            var intQueue = new QueueList<int>(5);
             intQueue.Add(5);
             Assert.IsTrue(intQueue[0] == 5);
         }
 
         [TestMethod]
         public void AddTillFull() {
-            QueueList<int> intQueue = new QueueList<int>(5);
+            var intQueue = new QueueList<int>(5);
             intQueue.AddRange(1,2,3,4,5);
 
             Assert.IsTrue(
@@ -31,7 +31,7 @@ namespace ButlerTests {
 
         [TestMethod]
         public void AddWhenFull() {
-            QueueList<int> intQueue = new QueueList<int>(5);
+            var intQueue = new QueueList<int>(5);
 
             intQueue.AddRange(1,2,3,4,5,6,7,8);
             
@@ -46,7 +46,7 @@ namespace ButlerTests {
 
         [TestMethod]
         public void Clear() {
-            QueueList<int> intQueue = new QueueList<int>();
+            var intQueue = new QueueList<int>();
             intQueue.AddRange(123,12,312,3123,123);
             intQueue.Clear();
 

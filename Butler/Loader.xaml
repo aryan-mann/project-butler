@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Loader" Height="100" Width="482" WindowStyle="None" WindowStartupLocation="CenterScreen" AllowsTransparency="True">
+        Title="Loader" Height="100" Width="482" WindowStyle="None" WindowStartupLocation="CenterOwner" AllowsTransparency="True">
     <Border BorderThickness="2" BorderBrush="{StaticResource BackgroundLevel3}">
         <Grid Background="{StaticResource BackgroundLevel1}">
             <Label x:Name="Status" Content="Checking if another instance is running" Margin="10,10,10,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" 

@@ -80,7 +80,7 @@ namespace Butler {
             Instance.ContextMenuStrip.Items.Clear();
             foreach(var kvp in MenuItems) {
                 //Initialize Button
-                ToolStripMenuItem tsb = new ToolStripMenuItem() {
+                var tsb = new ToolStripMenuItem() {
                     Text = kvp.Key,
                     TextAlign = ContentAlignment.MiddleCenter,
                     DisplayStyle = ToolStripItemDisplayStyle.Text,

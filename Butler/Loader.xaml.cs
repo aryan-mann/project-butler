@@ -1,20 +1,25 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Butler.Annotations;
+using Butler.Properties;
+using Newtonsoft.Json.Linq;
 using static System.Diagnostics.Process;
 using static System.IO.Path;
 using static System.Reflection.Assembly;
+using Settings = ModuleAPI.Settings;
 
-namespace Butler
-{
+namespace Butler {
 
     /// <summary>
     /// Interaction logic for Loader.xaml
     /// </summary>
-    public partial class Loader : Window, INotifyPropertyChanged
-    {
+    public partial class Loader: Window, INotifyPropertyChanged {
         public Loader() {
             InitializeComponent();
             Loaded += Loader_LoadedAsync;
@@ -55,12 +60,37 @@ namespace Butler
                 Dispatcher.Invoke(() => {
                     Progress.Value = 100;
                     Message = "Loaded all modules";
-                    new MainWindow().Show();
-                    Close();
+                    CheckPreferences();
                 });
             };
 
             await ModuleLoader.LoadAllAsync();
+        }
+
+        private void CheckPreferences() {
+            var loadSettings = Settings.CreateOrLoadSettings("Preferences", AppDomain.CurrentDomain.BaseDirectory);
+            
+            if(loadSettings != null) {
+
+                while (true) {
+                    try {
+                        loadSettings.Load();
+                        goto outloop;
+                    } catch { Task.Delay(250).Wait(); }
+                }
+
+                outloop:
+                var activeStatus = loadSettings.Get<JObject>("ActiveStatus");
+                if(activeStatus != null) {
+                    foreach (var keyValuePair in activeStatus) {
+                        var module = ModuleLoader.ModuleLoadOrder.FirstOrDefault(v => v.Value.Name == keyValuePair.Key);
+                        if(module.Value != null) { module.Value.Enabled = keyValuePair.Value.Value<bool>(); }
+                    }
+                }
+            }
+
+            new MainWindow().Show();
+            Close();
         }
 
 

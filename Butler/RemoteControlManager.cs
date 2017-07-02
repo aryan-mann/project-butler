@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using Butler.Annotations;
+using ModuleAPI;
 
 namespace Butler {
 
@@ -14,6 +15,7 @@ namespace Butler {
 
         private RemoteControlManager() {
             _listener = new TcpListener(IPAddress.Any, Port);
+            Command.PseudoCommand += InvokeOnCommandRecieved;
         }
         private static RemoteControlManager _instance;
         public static RemoteControlManager Instance => (_instance = _instance ?? new RemoteControlManager());
@@ -66,15 +68,15 @@ namespace Butler {
         }
         
         void HandleClient(TcpClient client) {
-            TcpClient tcpClient = client;
-            NetworkStream stream = tcpClient.GetStream();
+            var tcpClient = client;
+            var stream = tcpClient.GetStream();
             
             ClientConnected?.Invoke(client);
 
-            byte[] message = new byte[4096];
+            var message = new byte[4096];
 
             while (true) {
-                int bytesRead = 0;
+                var bytesRead = 0;
 
                 try {
                     bytesRead = stream.Read(message, 0, 4096);
@@ -86,7 +88,7 @@ namespace Butler {
                     break;
                 }
 
-                string fullMessage = new ASCIIEncoding().GetString(message, 0, bytesRead).Replace("\r", "").Replace("\n", "");
+                var fullMessage = new ASCIIEncoding().GetString(message, 0, bytesRead).Replace("\r", "").Replace("\n", "");
                 InvokeOnCommandRecieved(fullMessage, tcpClient);
             }
         }

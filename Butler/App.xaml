@@ -82,6 +82,33 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
+        <!-- CHECKBOX -->
+        <Style x:Key="DefaultCheckBox" TargetType="CheckBox">
+            <Setter Property="Background" Value="{StaticResource BackgroundLevel5}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid Background="{TemplateBinding Background}" Width="{TemplateBinding Width}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*"/>
+                                    <ColumnDefinition Width="5*"/>
+                                </Grid.ColumnDefinitions>
+                                <Rectangle x:Name="LeftRect" Grid.Column="0" Fill="Maroon" HorizontalAlignment="Stretch" />
+                                <Rectangle x:Name="RightRect" Grid.Column="1" Fill="{Binding Background, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}" HorizontalAlignment="Stretch" />
+                            </Grid>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Fill" Value="{Binding Background, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}" TargetName="LeftRect"/>
+                                <Setter Property="Fill" Value="SeaGreen" TargetName="RightRect"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
     </Application.Resources>
 </Application>

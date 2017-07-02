@@ -52,13 +52,17 @@ namespace ModuleAPI {
                 Client.Connect((IPEndPoint) Client.Client.RemoteEndPoint);
             }
             
-            byte[] message = Encoding.UTF8.GetBytes($"\n{text}\n");
+            var message = Encoding.UTF8.GetBytes($"\n{text}\n");
             Client.GetStream().Write(message, 0, message.Length);
             Responded?.Invoke(text, this, Client);
         }
 
+        public delegate void OnPseudoCommand(string command, TcpClient client);
+        public static event OnPseudoCommand PseudoCommand;
+
+        public static void InvokePseudoCommand(string command, TcpClient client) => PseudoCommand?.Invoke(command, client);
+
         public override string ToString() => $"{UserModuleName} {UserInput}";
-        
     }
 
 }

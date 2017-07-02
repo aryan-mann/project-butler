@@ -63,7 +63,7 @@ namespace Butler {
         }
         
         private void InitiateCommand() {
-            string query = Input.Text;
+            var query = Input.Text;
             _cmdInstance.Hide();
 
             Task.Run(() => {
