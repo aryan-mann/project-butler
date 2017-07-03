@@ -3,13 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        Title="Loader" Height="100" Width="482" WindowStyle="None" WindowStartupLocation="CenterOwner" AllowsTransparency="True">
-    <Border BorderThickness="2" BorderBrush="{StaticResource BackgroundLevel3}">
-        <Grid Background="{StaticResource BackgroundLevel1}">
-            <Label x:Name="Status" Content="Checking if another instance is running" Margin="10,10,10,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" 
-                   VerticalContentAlignment="Center" Height="35" Foreground="{StaticResource SoftWhite}" FontSize="18"/>
-            <ProgressBar x:Name="Progress" Foreground="{DynamicResource Accent}" Height="32" Margin="10,0,10,10" VerticalAlignment="Bottom" VerticalContentAlignment="Center" BorderBrush="{x:Null}" />
-        </Grid>
-    </Border>
+        mc:Ignorable="d" DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="Loader" Height="124" Width="500" WindowStyle="SingleBorderWindow" WindowStartupLocation="CenterOwner">
+    <Grid Background="{StaticResource BackgroundLevel1}">
+        <Label x:Name="Status" Content="{Binding Message}" Margin="10,10,10,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" 
+                   VerticalContentAlignment="Center" Height="35" Foreground="{StaticResource SoftWhite}" Background="{StaticResource Accent}" FontSize="18"/>
+        <ProgressBar Value="{Binding Progress}" Foreground="{DynamicResource Accent}" Height="32" Margin="10,0,10,10" VerticalAlignment="Bottom" VerticalContentAlignment="Center" BorderBrush="{x:Null}" />
+    </Grid>
 </Window>

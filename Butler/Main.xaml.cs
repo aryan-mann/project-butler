@@ -191,7 +191,7 @@ namespace Butler {
         }
 
         private void ShowLogs_OnClick(object sender, RoutedEventArgs e) {
-            MessageBox.Show(Logger.LogSet.FirstOrDefault()?.Exception.Message);
+            LogViewer.Display();
         }
     }
 }

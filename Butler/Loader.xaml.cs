@@ -31,7 +31,13 @@ namespace Butler {
             private set { _message = value; OnPropertyChanged(); }
         }
 
-        private async void Loader_LoadedAsync(object sender, RoutedEventArgs e) {
+        private double _progress;
+        public double Progress {
+            get { return _progress; }
+            set { _progress = value; OnPropertyChanged(); }
+        }
+
+        private void Loader_LoadedAsync(object sender, RoutedEventArgs e) {
             Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
 
             if(GetProcessesByName(GetFileNameWithoutExtension(GetEntryAssembly().Location)).Length > 1) {
@@ -39,7 +45,7 @@ namespace Butler {
                 Application.Current.Shutdown();
             }
 
-            Progress.Value = 10;
+            Progress = 10;
 
             double pointPerModule = 0;
             ModuleLoader.LoadingStarted += count => {
@@ -52,29 +58,31 @@ namespace Butler {
             ModuleLoader.ModuleLoaded += module => {
                 Dispatcher.Invoke(() => {
                     Message = module.Name + " loaded";
-                    Progress.Value += pointPerModule;
+                    Progress += pointPerModule;
+                    Logger.Log($"Loaded {module.Name}");
                 });
             };
 
             ModuleLoader.LoadingEnded += () => {
-                Dispatcher.Invoke(() => {
-                    Progress.Value = 100;
-                    Message = "Loaded all modules";
-                    CheckPreferences();
+                Dispatcher.Invoke(async () => {
+                    Progress = 100;
+                    Message = "Loading preferences";
+                    await CheckPreferences();
                 });
             };
 
-            await ModuleLoader.LoadAllAsync();
+            Task.Factory.StartNew(ModuleLoader.LoadAll);
         }
 
-        private void CheckPreferences() {
-            var loadSettings = Settings.CreateOrLoadSettings("Preferences", AppDomain.CurrentDomain.BaseDirectory);
+        private async Task CheckPreferences() {
+
+            var loadSettings = await Task.Run(() => Settings.CreateOrLoadSettings("Preferences", AppDomain.CurrentDomain.BaseDirectory));
             
             if(loadSettings != null) {
 
                 while (true) {
                     try {
-                        loadSettings.Load();
+                        await Task.Run(() => loadSettings.Load());
                         goto outloop;
                     } catch { Task.Delay(250).Wait(); }
                 }
@@ -92,7 +100,6 @@ namespace Butler {
             new MainWindow().Show();
             Close();
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         [NotifyPropertyChangedInvocator]

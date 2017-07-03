@@ -177,7 +177,7 @@ namespace Butler {
                     Logger.Log("Module loading error", exc);
                     return null;
                 }
-            });
+            }).ToList();
 
             var foundModules = new List<UserModule>();
             foreach(var modTask in modTasks) {

@@ -88,6 +88,9 @@
       <DependentUpon>Loader.xaml</DependentUpon>
     </Compile>
     <Compile Include="Logger.cs" />
+    <Compile Include="LogViewer.xaml.cs">
+      <DependentUpon>LogViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="QueueList.cs" />
     <Compile Include="RemoteControlManager.cs" />
@@ -99,6 +102,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Loader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LogViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

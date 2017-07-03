@@ -14,7 +14,7 @@ namespace Butler {
         // SINGLETON
         private Logger() { }
         private static Logger _instance;
-        private static Logger Instance => (_instance = _instance ?? new Logger());
+        public static Logger Instance => (_instance = _instance ?? new Logger());
 
         public HashSet<Log> Logs { get; private set; } = new HashSet<Log>();
 
