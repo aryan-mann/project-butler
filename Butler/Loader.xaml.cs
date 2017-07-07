@@ -71,7 +71,7 @@ namespace Butler {
                 });
             };
 
-            Task.Factory.StartNew(ModuleLoader.LoadAll);
+            Task.Run(async () => await ModuleLoader.LoadAllAsync());
         }
 
         private async Task CheckPreferences() {

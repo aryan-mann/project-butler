@@ -125,14 +125,15 @@ namespace Butler {
 
         //Indicate to the Module that a command has been received for it 
         public void GiveRegexCommand(Command cmd) {
-            if(!IsInitialized)
+            if (!IsInitialized) {
                 GiveInitializedCommand();
+                IsInitialized = true;
+            }
 
             if(!RegisteredCommands.Keys.Contains(cmd.LocalCommand)) { return; }
             Task.Run(() => _onCommandRecievedMethod.Invoke(Instance, new object[] { cmd }));
         }
         public void GiveInitializedCommand() {
-            if(!IsInitialized)
                 Task.Run(() => _onInitialized.Invoke(Instance, new object[] { }));
         }
         public void GiveConfigureSettingsCommand() {

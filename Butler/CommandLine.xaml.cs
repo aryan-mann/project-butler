@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -36,12 +37,25 @@ namespace Butler {
             
             PreviewKeyDown += CommandLine_PreviewKeyDown;
 
+            Command.Responded += ResponseReceieved;
+
             //Hide when focus is lost
             Deactivated += (sender, e) => {
                 Hide();
             };
         }
-        
+
+        private string _response;
+        public string Response {
+            get { return _response; }
+            set { _response = value; OnPropertyChanged(); }
+        }
+
+
+        private void ResponseReceieved(string response, Command com, TcpClient client) {
+            Response = $"[{com.UserModuleName}] > {response}";
+        }
+
         private QueueList<string> _commandHistory = new QueueList<string>(10);
 
         // Control window visibility using keyboard
@@ -64,7 +78,7 @@ namespace Butler {
         
         private void InitiateCommand() {
             var query = Input.Text;
-            _cmdInstance.Hide();
+            //_cmdInstance.Hide();
 
             Task.Run(() => {
                 UserModule um = null;
@@ -103,7 +117,6 @@ namespace Butler {
 
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
