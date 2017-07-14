@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace Butler {
         }
         private CommandLine() {
             InitializeComponent();
-
+            
             SourceInitialized += CommandLine_SourceInitialized;
             Activated += CommandLine_Activated;
             GotFocus += CommandLine_Activated;
@@ -53,10 +54,10 @@ namespace Butler {
 
 
         private void ResponseReceieved(string response, Command com, TcpClient client) {
-            Response = $"[{com.UserModuleName}] > {response}";
+            Response = $"{response}";
         }
 
-        private QueueList<string> _commandHistory = new QueueList<string>(10);
+        private readonly QueueList<string> _commandHistory = new QueueList<string>(10);
 
         // Control window visibility using keyboard
         private void CommandLine_PreviewKeyDown(object sender, KeyEventArgs e) {

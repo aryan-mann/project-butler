@@ -81,7 +81,7 @@ namespace Butler {
 
                     if(UserModule.FindResponsibleUserModule(command, out mod, out cm, tcpClient)) {
                         Dispatcher.Invoke(() => {
-                            Status = $"{(tcpClient != null ? tcpClient.Client.RemoteEndPoint + " > " : "")} [{mod.Name}:{mod.Prefix}] > {cm.LocalCommand}";
+                            Status = $"{(tcpClient != null ? (tcpClient.Client.RemoteEndPoint + " > ") : "")} [{mod.Name}:{mod.Prefix}] > {cm.LocalCommand}";
                             mod.GiveRegexCommand(cm);
                         });
                     }
@@ -102,7 +102,7 @@ namespace Butler {
 
             Command.Responded += (response, com, client) => {
                 Dispatcher.Invoke(() => {
-                    Status = $"[{com.UserModuleName}] > {response}";
+                    Status = $"{((com != null && com != Command.Empty) ? $"[{com?.UserModuleName}] > " : "")}{response}";
                 });
             };
         }
@@ -120,7 +120,7 @@ namespace Butler {
         
         /* Right Menu Button Events (START) */
         private void AboutButton_Click(object sender, RoutedEventArgs e) {
-            MessageBox.Show("Developed By Aryan Mann", "Hey!", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Developed By Cyan", "Hey!", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         private void RemoteButton_Click(object sender, RoutedEventArgs e) {
             if(!RemoteManager.ServerRunning) {
