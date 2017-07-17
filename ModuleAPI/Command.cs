@@ -72,6 +72,7 @@ namespace ModuleAPI {
         public static void GiveGeneralResponse(string response, Command com = null) => Responded?.Invoke(response, com ?? Command.Empty, null);
 
         public override string ToString() => $"{UserModuleName} {UserInput}";
+
     }
 
 }

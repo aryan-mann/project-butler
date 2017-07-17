@@ -75,7 +75,6 @@ namespace Butler {
         }
 
         private async Task CheckPreferences() {
-
             var loadSettings = await Task.Run(() => Settings.CreateOrLoadSettings("Preferences", AppDomain.CurrentDomain.BaseDirectory));
             
             if(loadSettings != null) {
@@ -96,7 +95,7 @@ namespace Butler {
                     }
                 }
             }
-
+            
             new MainWindow().Show();
             Close();
         }

@@ -25,8 +25,7 @@ namespace ModuleAPI
         // (**).CodeBase returns the location of the class library (.dll)
         // Thus, by getting it's directory, we can get BaseDirectory of the module
         public string ModuleDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetAssembly(GetType()).CodeBase.Substring(8));
-
-        // TURN THIS INTO AN ORDERED DICTIONARY GOD DAMN IT
+        
         public abstract Dictionary<string, Regex> RegisteredCommands { get; }
 
         /// <summary>
