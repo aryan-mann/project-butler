@@ -38,7 +38,3 @@ When the regular expression provided by a Module are matched, the ``OnCommandRec
 ## How restricted is the API?
 The API is there to communicate when your specified commands are received and that's it. Everything else is the responsibility of the 
 module. This opens up huge possibilites of how a module can function.
-
-## My Vision
-My vision for Project Butler is a free market of amazing and helpful modules drien by a community of passionate developers 
-making modules for the sole purpose of making something cool, useful, and handy.
