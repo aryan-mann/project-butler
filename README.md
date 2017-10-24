@@ -6,6 +6,25 @@
 
 Project Butler is a customizable and modular combination of a GUI and a command-line (GUI-line as I like to call it). It combines the efficiency of a programmers keyboard with the design and accessibility of a GUI. Using the Module API, you can create custom libraries that can be dynamically loaded by Project Butler at runtime. Just set a few Regex commands and you're good to go!
 
+![Project Butler Main Window](https://i.imgur.com/HvnoavP.png)
+
+## How do I use it?
+As Project Butler is merely a "mediator", it does not have any inherent functionality other than the ability to communicate commands between Modules and your keyboard, phone, or another computer. It's functionality comes from the various Modules written for it. 
+
+Currently available modules:- 
+1. [Music Player](https://github.com/aryan-mann/Mod-MusicPlayer)
+2. [Youtube Navigator](https://github.com/aryan-mann/Mod-YoutubeViewer)
+3. [Experimental / Unassorted](https://github.com/aryan-mann/Mod-Random)
+
+To add an external Module, you need to copy the main \*.dll file and all its dependancies to a new folder under the Modules directory. If valid, Project Butler will show the name and details of that Module in the Main Window, otherwise you can check for errors using the Logs tab on the top right.
+
+Before use, you need to activate the Module by flipping the red switch next to its name. The supported Regex commands are listed below its name along with the prefix that the Module uses.
+
+## How do I connect to it using WiFi?
+Press the **Start** button on the top right of the screen in the Main Window and wait for it to turn green. Once it's green, using a TCP client, connect to the network address of your computer at port `4144`
+
+# DEVELOPER GUIDE
+
 ## What are Modules?
 Essentially, *Modules* are WPF (Windows Presentation Foundation) class libraries (.dll) [C# 6.0./.Net 4.6] that are dynamically loaded by Project Butler at runtime. They contain atleast one main class (that has the *Application Hook* attribute) which acts as the entry point to the Module. Therefore, the hook class acts as a bridge between your application and Project Butler. 
 
