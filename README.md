@@ -38,3 +38,25 @@ When the regular expression provided by a Module are matched, the ``OnCommandRec
 
 ## How restricted is the API?
 The API is there to communicate when your specified commands are received, provide a way to give a response, and that's it. Your custom module is only limited by the language itself (so not much at all).
+
+## How do I setup my module?
+The setup is fairly straightforward and ideal for development with rapid changes.
+
+1. Create a WPF Class Library that targets .NET 4.6
+2. Include a reference to ModuleAPI
+3. Change your debug mode to **External Application** and point it to the executable for Project Butler
+
+Finally, in your post-build events, add the following code:- 
+
+```
+mkdir "{{Modules Directory of Project Butler}}\$(ProjectName)"
+copy "$(TargetPath)" "{{Modules Directory of Project Butler}}\$(ProjectName)\$(TargetFileName)"
+```
+
+Replace `{{Modules Directory of Project Butler}}` with well.. the Modules directory of Project Butler.
+
+## How do I get started with my code?
+First, create a class that inherits from ModuleAPI.Module. Override Name, SemVer, Author, Website, and Prefix propreties.
+Then override and implement ConfigureSettings, OnShutdown, and OnInitialized functions.
+
+The RegisteredCommands property is a dictionary of type <string, Regex> where the key is an alias for your Regex command. Upon detection of a command, Project Butler will invoke the OnCommandRecieved function with the name (key) of the detected Regex command. Using that, you can get the matched groups of the Regular Expression and use them as parameters for your future functions. 
