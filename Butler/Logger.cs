@@ -47,7 +47,8 @@ namespace Butler {
         }
 
         public override string ToString() {
-            return $"[{DateTime:T}] {Description}{(Exception == null ? "" : $" [{Exception.Message}]")}";
+            return $"[{DateTime:T}] {Description}{(Exception?.InnerException?.ToString() ?? Exception?.Message?.ToString() ?? "")}";
+            //return $"[{DateTime:T}] {Description}{(Exception == null ? "" : $" [{Exception.Message}]")}";
         }
     }
 

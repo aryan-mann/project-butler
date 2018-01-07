@@ -51,9 +51,20 @@ namespace Butler {
             LastNodePosition = _nodes.Count - 1;
         }
 
+        public void AddDistinct(T item) {
+            if(_nodes.ContainsValue(item)) { return; }
+            Add(item);
+        }
+
         public void AddRange(params T[] list) {
             foreach (var val in list) {
                 Add(val);
+            }
+        }
+
+        public void AddDistinctRange(params T[] list) {
+            foreach (var val in list) {
+                AddDistinct(val);
             }
         }
 

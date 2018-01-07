@@ -13,7 +13,7 @@ using ModuleAPI;
 namespace Butler {
 
     public class UserModule {
-
+        
         /* Instance Management */
         public Type ModuleType { get; private set; }
         private object _instance;

@@ -146,7 +146,7 @@ namespace Butler {
             var modTasks = directories.Where(dir => !dir.EndsWith("...ignore")).Select(async dir => {
                 var files = Directory.GetFiles(dir, "*.dll", SearchOption.AllDirectories);
                 UserModule mod = null;
-
+                
                 try {
                     foreach (var file in files) {
                         var asm = Assembly.LoadFrom(file);

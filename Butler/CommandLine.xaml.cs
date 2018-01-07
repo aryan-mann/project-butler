@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -37,7 +35,6 @@ namespace Butler {
             };
             
             PreviewKeyDown += CommandLine_PreviewKeyDown;
-
             Command.Responded += ResponseReceieved;
 
             //Hide when focus is lost
